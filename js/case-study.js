@@ -713,3 +713,24 @@ function cs_montada(){return !document.querySelector('x-dc')&&!!document.querySe
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){ init(0); });else init(0);
 })();
+
+(function(){
+  // ovalo del correo (seccion .cta): se dibuja al entrar en pantalla, una sola vez
+  if(window.__mcOval)return; window.__mcOval=1;
+  if(!('IntersectionObserver' in window)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+  document.documentElement.classList.add('ov-arm');
+  var tries=0;
+  function init(){
+    var o=[].filter.call(document.querySelectorAll('.oval'),function(e){ return !e.closest('x-dc'); })[0];
+    // el footer puede montarse después (plantilla x-dc); sin óvalo tras ~6s (contact, 404...) se deja de buscar
+    if(!o)return ++tries<50&&setTimeout(init,120);
+    // (2026-10-21) .98 y no 1: en el móvil el óvalo es lo último de .cta (overflow:hidden) y su
+    // alto (86.185px) asoma ~0,03px por debajo de la sección al redondear el layout. Recortado
+    // así su ratio se queda en 0.9996, nunca llegaba a 1 y el óvalo no aparecía nunca.
+    var io=new IntersectionObserver(function(es){
+      for(var i=0;es.length>i;i++)if(es[i].isIntersecting&&es[i].intersectionRatio>=.98){es[i].target.classList.add('ov-in');io.unobserve(es[i].target);}
+    },{threshold:.98,rootMargin:'0px 0px -8% 0px'});
+    io.observe(o);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();

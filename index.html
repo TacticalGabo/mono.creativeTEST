@@ -576,8 +576,8 @@ html.mc-leaving .page{opacity:0;transition:opacity .28s ease-out}
 .body{font-size:14px;line-height:1.7;color:var(--body)}
 .mono{font-family:var(--mono);font-size:13px;line-height:24px}
 .cap{font-family:var(--mono);font-size:13px;line-height:24px;text-transform:uppercase;color:var(--cap-weak);white-space:nowrap}
-@media (min-width:768px){.grid3 .cap,.grid2b .cap{white-space:normal;text-wrap:pretty}}
-@media (max-width:767.9px){.cap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}}
+/* (2026-10-21) una sola línea con "..." en todos los anchos (antes en desktop .grid3/.grid2b bajaban a dos filas) */
+.cap{overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .cap b,.cap em{text-transform:uppercase;transition:color .5s ease}
 .fig:hover .cap b,.fig:hover .cap em,.showcase:has(.phone:hover,.sc-cap:hover) .sc-cap em{color:var(--accent)}
 .cap b{font-weight:400;color:var(--cap-strong)}
@@ -890,6 +890,14 @@ html:not([data-theme="light"]) .theme-toggle .tt-half{transform:rotate(180deg)}
 /* el velo de la tarjeta queda debajo de los teléfonos; cada teléfono lleva el suyo,
    así solo se aclara el que está en hover (o ambos si el hover es sobre el caption) */
 .sc-card .phone{z-index:1}
+/* (2026-10-21) Grano de FONDO dentro de la tarjeta (su color opaco tapaba el grano fijo de detrás). Misma ventana
+   que las imágenes: .sc-grain es fijo a la pantalla y clip-path:border-box lo recorta a la tarjeta; queda sobre el
+   color de la tarjeta y bajo los teléfonos (z-index:1). Mismas texturas, tamaños y fundido de tema que .grain-overlay. */
+.sc-card{clip-path:border-box}
+.sc-grain{position:fixed;inset:0;pointer-events:none}
+.sc-grain::before,.sc-grain::after{content:"";position:absolute;inset:0}
+.sc-grain::before{background:url('./assets/shared/texture-grain-dark.png') 0 0/153.6px 153.6px repeat;opacity:calc(1 - var(--fade-p,0))}
+.sc-grain::after{background:url('./assets/shared/texture-grain-light.png') 0 0/115.2px 115.2px repeat;opacity:var(--fade-p,0)}
 .phone::after{content:"";position:absolute;inset:0;border-radius:inherit;background:#fff;opacity:0;transition:opacity .5s ease;pointer-events:none}
 .phone:hover::after,.showcase:has(.sc-cap:hover) .phone::after{opacity:.3}
 .sc-cap{width:fit-content}
@@ -1131,7 +1139,10 @@ html.ov-arm .oval.ov-in b ellipse{transition:stroke-dashoffset .45s cubic-bezier
 html.ov-arm .oval.ov-in i ellipse{transition:stroke-dashoffset .45s cubic-bezier(.65,0,.35,1) .6s}
 html.ov-arm .oval.ov-in span{transition:color .5s ease,opacity .4s ease .65s}
 .oval i{left:0;top:0;transform:matrix(.998,-.060,.060,.998,0,13.449);transform-origin:0 0}
-.oval b{left:1.988px;top:6.659px;background:var(--bg)}
+/* (2026-10-21) Óvalo del correo: el de adelante (b) va sin relleno, así se ve el grano de detrás. El trazo del de
+   atrás (i) se recorta con un clipPath dentro de su svg con la forma de b, pasada a las coordenadas de i (inversa de
+   su matrix). Medidas proporcionales en móvil y desktop: el mismo recorte sirve para los dos. Estática: se pinta una vez. */
+.oval b{left:1.988px;top:6.659px}
 .oval span{position:absolute;left:50%;top:50%;transform:translate(calc(-50% - 2.4px),calc(-50% + 1.7px)) rotate(-3.46deg);transform-origin:50% 50%;font-family:var(--mono);font-size:13.18px;line-height:1.176;letter-spacing:.205px;white-space:nowrap;text-align:center;color:var(--email)}
 @media (min-width:768px){
   .cta{margin-top:25.4px;padding-top:88.8px;min-height:264px}
@@ -2484,7 +2495,7 @@ Then we set the base for launch and growth, with clear files, clean rules and <b
       <div class="sc-card">
         <div class="phone"><video data-src="./assets/home/gvrn1" muted loop playsinline preload="none" aria-hidden="true"></video></div>
         <div class="phone"><video data-src="./assets/home/gvrn2" muted loop playsinline preload="none" aria-hidden="true"></video></div>
-      </div>
+      <i class="sc-grain" aria-hidden="true"></i></div>
       <p class="cap sc-cap" data-project="gvrn-ai"><em>GVRN</em> · Web Platform · 2026</p>
     </div>
     <div class="grid2b">
@@ -2512,7 +2523,7 @@ Then we set the base for launch and growth, with clear files, clean rules and <b
         <p class="cta-b">Tell us what you are building and where expert guidance would help.</p>
       </div>
       <div class="oval" data-comp="email-oval">
-        <i><svg viewBox="0 0 224.03 72.868" preserveAspectRatio="none" aria-hidden="true"><ellipse pathLength="1" cx="112.015" cy="36.434" rx="111.627" ry="36.046"/></svg></i><b><svg viewBox="0 0 224.03 72.868" preserveAspectRatio="none" aria-hidden="true"><ellipse pathLength="1" cx="112.015" cy="36.434" rx="111.627" ry="36.046"/></svg></b>
+        <i><svg viewBox="0 0 224.03 72.868" preserveAspectRatio="none" aria-hidden="true"><clipPath id="ov-front"><path clip-rule="evenodd" d="M-50 -50H274V123H-50ZM223.876 43.163L223.780 44.113L223.608 45.057L223.360 45.996L223.035 46.928L222.634 47.853L222.157 48.771L221.605 49.679L220.977 50.579L220.275 51.469L219.499 52.349L218.649 53.217L217.726 54.075L216.731 54.920L215.664 55.752L214.526 56.571L213.318 57.377L212.040 58.168L210.694 58.944L209.280 59.705L207.799 60.450L206.253 61.178L204.642 61.890L202.968 62.584L201.232 63.260L199.434 63.918L197.577 64.556L195.661 65.176L193.687 65.776L191.658 66.356L189.574 66.915L187.437 67.453L185.248 67.971L183.009 68.466L180.721 68.940L178.387 69.391L176.007 69.820L173.583 70.226L171.116 70.608L168.610 70.968L166.064 71.303L163.482 71.615L160.864 71.903L158.213 72.166L155.530 72.405L152.818 72.619L150.077 72.808L147.311 72.973L144.520 73.112L141.707 73.227L138.873 73.316L136.022 73.379L133.153 73.418L130.271 73.431L127.376 73.419L124.470 73.381L121.556 73.318L118.635 73.230L115.710 73.117L112.782 72.978L109.854 72.815L106.927 72.626L104.004 72.413L101.086 72.175L98.176 71.913L95.275 71.626L92.386 71.315L89.510 70.980L86.650 70.622L83.807 70.240L80.983 69.835L78.181 69.407L75.402 68.957L72.648 68.484L69.921 67.989L67.223 67.473L64.555 66.935L61.920 66.377L59.320 65.798L56.756 65.199L54.229 64.580L51.742 63.942L49.297 63.284L46.894 62.609L44.536 61.916L42.225 61.205L39.961 60.477L37.747 59.733L35.583 58.973L33.472 58.197L31.415 57.406L29.413 56.601L27.468 55.783L25.580 54.951L23.752 54.106L21.985 53.249L20.279 52.381L18.636 51.502L17.057 50.612L15.543 49.713L14.095 48.804L12.714 47.887L11.402 46.963L10.158 46.031L8.985 45.092L7.882 44.148L6.850 43.198L5.890 42.244L5.003 41.285L4.190 40.324L3.450 39.360L2.785 38.393L2.195 37.426L1.680 36.457L1.240 35.489L0.877 34.521L0.590 33.555L0.379 32.590L0.244 31.629L0.187 30.670L0.205 29.716L0.301 28.766L0.473 27.821L0.722 26.882L1.047 25.950L1.448 25.025L1.924 24.108L2.477 23.199L3.104 22.300L3.806 21.410L4.582 20.530L5.432 19.661L6.355 18.804L7.350 17.959L8.417 17.127L9.555 16.307L10.764 15.502L12.041 14.711L13.388 13.934L14.801 13.174L16.282 12.429L17.828 11.700L19.439 10.989L21.113 10.295L22.850 9.619L24.647 8.961L26.505 8.322L28.421 7.703L30.394 7.103L32.424 6.523L34.508 5.964L36.645 5.425L38.834 4.908L41.072 4.413L43.360 3.939L45.695 3.488L48.075 3.059L50.499 2.653L52.965 2.270L55.472 1.911L58.017 1.575L60.599 1.264L63.217 0.976L65.868 0.713L68.551 0.474L71.264 0.260L74.004 0.070L76.771 -0.094L79.562 -0.234L82.375 -0.348L85.208 -0.437L88.060 -0.501L90.928 -0.539L93.811 -0.552L96.706 -0.540L99.611 -0.503L102.526 -0.440L105.446 -0.352L108.372 -0.238L111.299 -0.100L114.228 0.064L117.154 0.252L120.078 0.466L122.995 0.703L125.906 0.966L128.806 1.253L131.696 1.563L134.571 1.898L137.432 2.257L140.275 2.638L143.098 3.043L145.900 3.471L148.680 3.922L151.434 4.395L154.160 4.889L156.859 5.406L159.526 5.943L162.161 6.502L164.761 7.081L167.326 7.680L169.852 8.299L172.339 8.937L174.785 9.594L177.187 10.270L179.545 10.963L181.857 11.674L184.120 12.402L186.335 13.146L188.498 13.906L190.609 14.682L192.666 15.472L194.668 16.277L196.614 17.096L198.501 17.928L200.329 18.773L202.097 19.630L203.803 20.498L205.446 21.377L207.025 22.267L208.539 23.166L209.986 24.074L211.367 24.991L212.679 25.916L213.923 26.848L215.097 27.786L216.200 28.731L217.232 29.681L218.191 30.635L219.078 31.593L219.892 32.555L220.631 33.519L221.296 34.485L221.887 35.453L222.402 36.421L222.841 37.390L223.205 38.357L223.492 39.324L223.703 40.288L223.837 41.250L223.895 42.208Z"/></clipPath><ellipse clip-path="url(#ov-front)" pathLength="1" cx="112.015" cy="36.434" rx="111.627" ry="36.046"/></svg></i><b><svg viewBox="0 0 224.03 72.868" preserveAspectRatio="none" aria-hidden="true"><ellipse pathLength="1" cx="112.015" cy="36.434" rx="111.627" ry="36.046"/></svg></b>
         <span>hello.monocreative<br>@gmail.com</span>
       </div>
     </div>
