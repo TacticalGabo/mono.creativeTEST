@@ -1,6 +1,10 @@
 /* mono.creative — JS común de los case studies (casestudy_*.html). Se carga con defer.
    Cada init espera a la página montada por el runtime (fuera de <x-dc>). */
 
+/* (2026-10-21) página ya montada por el runtime (sin <x-dc> y con su .page): si lo que busca un
+   init no está entonces, no va a llegar (contact, privacy, 404) y se deja de sondear. */
+function cs_montada(){return !document.querySelector('x-dc')&&!!document.querySelector('.page')}
+
 /* case study: entrada por bloques y barras de acento de Before / After.
    (La clase .js la pone cada página en su <head>, síncrona, antes de pintar.) */
 (function(){
@@ -70,7 +74,7 @@
   init.n=0;
   function init(){
     var sec=document.querySelector('.cs-constraints');
-    if(!sec||sec.closest('x-dc')||!sec.querySelector('.curve--v path')){if(++init.n<250)setTimeout(init,120);return}   /* tope 30 s (2026-10-19): sin .cs-constraints (contact, privacy) sondeaba para siempre */
+    if(!sec||sec.closest('x-dc')||!sec.querySelector('.curve--v path')){if(!sec&&cs_montada())return;if(++init.n<250)setTimeout(init,120);return}   /* tope 30 s (2026-10-19): sin .cs-constraints (contact, privacy) sondeaba para siempre */
     /* (2026-10-16) lo de abajo (700 muestras de la curva + medidas de layout forzadas) se hace al
        acercarse la sección (1,5 pantallas), no al montar la página: en el móvil tomaba el hilo
        justo cuando salían el header y el hero */
@@ -229,7 +233,7 @@
   var tries=0;
   function init(){
     var main=live('main[data-case]')[0];
-    if(!main){if(++tries<750)setTimeout(init,40);return}   /* sondeo cada 40 ms (el hero y los bloques salen en cuanto la página está montada); tope 30 s: contact.html carga este JS y no tiene main[data-case] */
+    if(!main){if(!cs_montada()&&++tries<750)setTimeout(init,40);return}   /* sondeo cada 40 ms (el hero y los bloques salen en cuanto la página está montada); tope 30 s: contact.html carga este JS y no tiene main[data-case] */
     var io_ok='IntersectionObserver' in window;
     var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -500,7 +504,7 @@
    (--g*, --fade-p, tema), mismo blot (keyframes, ease-in-out, duración, retardo, reverse), mismo fundido
    fx-glow (ease) y mismo reloj (currentTime de las animaciones CSS al cambiar). Se pausa leyendo el
    animation-play-state del CSS (.idle, .espera, espera del logo...), así que para igual que antes.
-   Originales ocultos y sin animación (html.glow-cv + .cv-on). Móvil (.g-m) y reduced-motion siguen con el
+   Originales ocultos y sin animación (html.glow-cv + .cv-on). Móvil (.g-m, quietas desde 2026-10-21) y reduced-motion siguen con el
    CSS de siempre. Sin canvas filter/roundRect no se toca nada.
    CSS: .glow-cv-c / .cv-on en case-study.css. Mismo código que el script __mcGlowCv de index.html. */
 (function(){

@@ -5,6 +5,8 @@
 <link rel="icon" type="image/svg+xml" href="./assets/shared/logo-favicon-48x29.svg?v=3">
 <title>mono.creative</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101913">
+<script>/* (2026-10-21) móvil: la barra del navegador toma el fondo del tema (dark #101913 / light #f8fbf9) y lo sigue al cambiar (toggle, swap por scroll, vuelta con atrás) */(function(){var h=document.documentElement,m=document.querySelector('meta[name="theme-color"]');if(!m||!window.MutationObserver)return;function c(){m.setAttribute('content',h.getAttribute('data-theme')==='light'?'#f8fbf9':'#101913')}c();new MutationObserver(c).observe(h,{attributes:true,attributeFilter:['data-theme']})})()</script>
 <!-- (2026-10-19) Open Graph / Twitter Card: imagen al compartir el link. URL absoluta del dominio de produccion. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="mono.creative">
@@ -390,6 +392,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);scrollbar-width:none;-ms-overflow-style:none}
+html{-webkit-text-size-adjust:100%}   /* (2026-10-21) iPhone en horizontal: Safari no agranda el texto (titulares en nowrap) */
 .page,.page *{outline-color:transparent;-webkit-tap-highlight-color:transparent}
 .page *:focus{outline:none}
 .page *:focus-visible{outline:none}
@@ -544,13 +547,10 @@ html.mc-leaving .page{opacity:0;transition:opacity .28s ease-out}
   .hero .gA.g-d{animation:fx-glow 1.1s ease .3s both,blot 26s ease-in-out 2.5s infinite}
   .hero .gB.g-d{animation:fx-glow 1.1s ease .5s both,blot 22s ease-in-out 1.6s infinite reverse}
 }
-/* manchas orgánicas también en mobile */
+/* manchas orgánicas también en mobile, pero QUIETAS (2026-10-21): sin blot; las del hero solo
+   entran con fx-glow (regla .hero .gA / .hero .gB más abajo) */
 .glow.g-m{background:#9de14a;border-radius:54% 46% 38% 62%/56% 44% 62% 38%}
 /* .glow.gl = manchas del tema claro: PNG exportados del Figma "home light" (blur de Figma horneado, color, tamano y forma exactos); opacity = opacidad Figma * --fade-p */
-.about .glow.g-m{animation:blot 23s ease-in-out 1.4s infinite reverse}
-.cta .glow.g-m{animation:blot 26s ease-in-out .8s infinite}
-.hero .gA.g-m{animation:fx-glow 1.1s ease .3s both,blot 25s ease-in-out 2.2s infinite}
-.hero .gB.g-m{animation:fx-glow 1.1s ease .5s both,blot 21s ease-in-out 1.5s infinite reverse}
 /* blot ya NO anima border-radius. Todas las manchas llevan filter:blur(70-100px)
    y bajo ese desenfoque el morfeo de esquinas no se ve: medido en 12 fases
    congeladas, la diferencia máxima es de 6/255 y la media de 0,6/255.
@@ -1228,9 +1228,7 @@ html.ov-arm .oval.ov-in span{transition:color .5s ease,opacity .4s ease .65s}
 
 
 .hero .gB.g-d{animation:fx-glow 1.1s ease .5s both,blot 22s ease-in-out 1.6s infinite reverse}
-.hero .gB.g-m{animation:fx-glow 1.1s ease .5s both,blot 21s ease-in-out 1.5s infinite reverse}
 .hero .gA.g-d{animation:fx-glow 1.1s ease .3s both,blot 26s ease-in-out 2.5s infinite}
-.hero .gA.g-m{animation:fx-glow 1.1s ease .3s both,blot 25s ease-in-out 2.2s infinite}
 @media (prefers-reduced-motion:reduce){.hero .glow{animation:none!important}}
 .hero .gA{animation:fx-glow 1.1s ease .3s both}
 .hero .gB{animation:fx-glow 1.1s ease .5s both}
@@ -2766,7 +2764,7 @@ class Component extends DCLogic {
      (--g*, --fade-p, tema), mismo blot (keyframes, ease-in-out, duración, retardo, reverse), mismo fundido
      fx-glow (ease) y mismo reloj (currentTime de las animaciones CSS al cambiar). Se pausa leyendo el
      animation-play-state del CSS (.idle, .espera, espera del logo...), así que para igual que antes.
-     Originales ocultos y sin animación (html.glow-cv + .cv-on). Móvil (.g-m) y reduced-motion siguen con el
+     Originales ocultos y sin animación (html.glow-cv + .cv-on). Móvil (.g-m, quietas desde 2026-10-21) y reduced-motion siguen con el
      CSS de siempre. Sin canvas filter/roundRect no se toca nada. -->
 <style>
   .glow-cv-c{display:none}
