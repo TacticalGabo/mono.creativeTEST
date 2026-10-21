@@ -773,12 +773,13 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
        0.5 px), fijo, visto por una ventana: clip-path:border-box sigue el border-radius y recorta también al
        hijo fijo. Se pinta una vez; en el scroll la GPU solo mueve la ventana. */
   .grain-overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;will-change:transform;
-    background:url('./assets/shared/texture-grain-dark.png') 0 0/153.6px 153.6px repeat;
     min-height:100lvh}                 /* móvil: cubre también la franja que destapa la barra del navegador al scrollear */
-  :root[data-theme="light"] .grain-overlay{background-image:url('./assets/shared/texture-grain-light.png');background-size:115.2px 115.2px}   /* light: 3.35 / oscuros .15 / 100 % / 0.45 px */
-  /* precarga la textura del otro tema: el cambio de tema no espera a la descarga */
-  .grain-overlay::before{content:"";position:absolute;width:1px;height:1px;opacity:0;
-    background-image:url('./assets/shared/texture-grain-dark.png'),url('./assets/shared/texture-grain-light.png')}
+  /* Una capa por tema que se funden con --fade-p, al mismo paso que el color de fondo (antes la textura cambiaba
+     de golpe y durante el cruce de .45 s se veía la de un tema sobre el fondo del otro). Quietas no cuestan: la
+     que queda a opacidad 0 no se dibuja. Las dos están siempre cargadas, así el cambio no espera a la descarga. */
+  .grain-overlay::before,.grain-overlay::after{content:"";position:absolute;inset:0}
+  .grain-overlay::before{background:url('./assets/shared/texture-grain-dark.png') 0 0/153.6px 153.6px repeat;opacity:calc(1 - var(--fade-p,0))}   /* dark: 2 / oscuros 1 / 55 % / 0.6 px */
+  .grain-overlay::after{background:url('./assets/shared/texture-grain-light.png') 0 0/115.2px 115.2px repeat;opacity:var(--fade-p,0)}   /* light: 3.35 / oscuros .15 / 100 % / 0.45 px */
   :is(body,.page){background-color:transparent}   /* html pinta el color; body tapaba la capa z-index:-1 */
   /* .grid2 .col (mosaico, desktop): contain:size en vez de size+layout. Con 'layout' la columna pasa a ser la
      referencia de lo fijo y el grano de esas imágenes se movía con ella (medido: el layout extra es despreciable). */
