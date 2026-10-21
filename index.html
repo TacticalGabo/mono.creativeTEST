@@ -519,7 +519,6 @@ html.mc-leaving .page{opacity:0;transition:opacity .28s ease-out}
    por eso en ventana normal se veía fluido: el problema solo asoma con DPR
    alto, o sea en el teléfono real. Igual que arriba: la capa no se alterna. */
 .glow{will-change:transform,opacity}
-.grain{will-change:transform}
 /* Mancha lejos del viewport = fuera del pipeline entero: sin pintado, sin capa
    en GPU y sin recomposición cuando el cruce le cambia la opacidad. La marca
    un observer propio (script del __mcGlowIO) sobre CADA mancha, no sobre su
@@ -565,7 +564,6 @@ html.mc-leaving .page{opacity:0;transition:opacity .28s ease-out}
   100%{translate:0 0;scale:1}
 }
 @media (prefers-reduced-motion:reduce){.glow.g-d{animation:none!important}}
-.grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.16;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyMDAnIGhlaWdodD0nMjAwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nLjY1JyBudW1PY3RhdmVzPSczJyBzdGl0Y2hUaWxlcz0nc3RpdGNoJy8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9JzIwMCcgaGVpZ2h0PScyMDAnIGZpbHRlcj0ndXJsKCNuKScvPjwvc3ZnPg==");background-size:200px 200px}
 .d-only{display:none}
 
 /* type */
@@ -2297,7 +2295,6 @@ html.ov-arm .oval.ov-in span{transition:color .5s ease,opacity .4s ease .65s}
 <div class="qa-w" data-comp="qa-width-overlay"></div>
 <div class="page" data-screen-label="home — responsive">
   <div class="bgfade"></div>
-  <div class="grain"></div>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-60%" y="-140%" width="220%" height="380%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"></feGaussianBlur><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="g"></feColorMatrix><feComposite in="SourceGraphic" in2="g" operator="atop"></feComposite></filter></svg>
 
   <!-- MENÚ MOBILE (2026-10-05): desplegable de la hamburguesa. Va ANTES del header porque es
@@ -2833,7 +2830,10 @@ class Component extends DCLogic {
     return {img:c,x:-pad,y:-pad,w:c.width/k,h:c.height/k};
   }
   function anim(el,n){ var a=el.getAnimations(); for(var i=0;i<a.length;i++)if(a[i].animationName===n)return a[i]; return null; }
-  var GR=[], on=false, raf=0, poll=0, last=0, mq, rm;
+  var GR=[], on=false, raf=0, poll=0, last=0, next=0, leerHasta=0, mo=null, mq, rm;
+  // (2026-10-21) 30 fps: a 60 Hz la mancha avanza <0,1 px por frame, a 30 fps no se nota y se pinta la mitad
+  // (un cuarto a 120 Hz). La cadencia se reparte sola en 75/90/144 Hz (next += INT, sin deriva).
+  var INT=1000/30;
   // caja de cada mancha (offsetLeft/Top, matriz de transform) y la del canvas que las cubre a todas en cualquier fase de blot
   function geo(gr){
     var x0=1/0, y0=1/0, x1=-1/0, y1=-1/0;
@@ -2879,23 +2879,31 @@ class Component extends DCLogic {
   }
   // estado de cada mancha leído del CSS (animation-play-state sigue en cascada aunque el nombre sea none):
   // así se pausa exactamente cuando pausaba su animación (.idle, .espera, espera del logo...). Opacidad = --g*, --fade-p, tema.
-  function lee(dt){
+  // (2026-10-21) Solo se lee (leer=true) tras un cambio de clase/estilo/tema en <html> o en los padres de las
+  // manchas (mira()) y durante el cruce de --fade-p (.45 s); el resto del tiempo se usa lo último leído.
+  function lee(dt,leer){
     var vivo=false;
     GR.forEach(function(gr){
       var sucio=gr.sucio; gr.sucio=false;
       gr.G.forEach(function(g){
-        var cs=getComputedStyle(g.el), op=parseFloat(cs.opacity)||0;
-        if(cs.animationPlayState.indexOf('paused')<0){ vivo=true; if(dt){ g.t+=dt; sucio=true; } }
-        if(op!==g.op){ g.op=op; sucio=true; }
+        if(leer){
+          var cs=getComputedStyle(g.el), op=parseFloat(cs.opacity)||0;
+          g.vivo=cs.animationPlayState.indexOf('paused')<0;
+          if(op!==g.op){ g.op=op; sucio=true; }
+        }
+        if(g.vivo){ vivo=true; if(dt){ g.t+=dt; sucio=true; } }
       });
       if(sucio)pinta(gr);
     });
     return vivo;
   }
+  function mira(){ leerHasta=performance.now()+700; }   // 700 = cruce de tema .45 s + margen
   function frame(now){
     raf=0; if(!on)return;
+    if(next&&now<next-1){ raf=requestAnimationFrame(frame); return; }
+    next=(next&&now-next<INT)?next+INT:now+INT;
     var dt=last?Math.min(now-last,100):0; last=now;
-    if(!lee(dt)||document.hidden){ last=0; if(!poll)poll=setTimeout(function(){ poll=0; if(on&&!raf)raf=requestAnimationFrame(frame); },150); return; }
+    if(!lee(dt,now<leerHasta)||document.hidden){ last=0; next=0; if(!poll)poll=setTimeout(function(){ poll=0; if(on&&!raf)raf=requestAnimationFrame(frame); },150); return; }
     raf=requestAnimationFrame(frame);
   }
   function arranca(){
@@ -2911,9 +2919,19 @@ class Component extends DCLogic {
       });
       geo(gr); gr.sucio=true;
     });
-    lee(0);
+    if(!mo){
+      mo=new MutationObserver(mira);
+      var vistos=[];
+      GR.forEach(function(gr){
+        for(var n=gr.par;n&&n.nodeType===1;n=n.parentElement){
+          if(vistos.indexOf(n)>=0)break; vistos.push(n);
+          mo.observe(n,{attributes:true,attributeFilter:['class','style','data-theme']});
+        }
+      });
+    }
+    mira(); lee(0,true);
     document.documentElement.classList.add('glow-cv');
-    on=true; last=0; raf=requestAnimationFrame(frame);
+    on=true; last=0; next=0; raf=requestAnimationFrame(frame);
   }
   function para(){
     if(!on)return; on=false; if(raf)cancelAnimationFrame(raf); raf=0;
@@ -2961,7 +2979,7 @@ class Component extends DCLogic {
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){ init(0); });else init(0);
 })();
 </script>
-<!-- GRAIN-OVERLAY:START — 2a capa de grano sobre el .grain original. Ajuste aprobado 2026-09-20 -->
+<!-- GRAIN-OVERLAY:START — capa de grano. Ajuste aprobado 2026-09-20; el .grain original se retiró 2026-10-21 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 <style>
   .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
@@ -2972,7 +2990,6 @@ class Component extends DCLogic {
   /* light: overlay sobre fondo claro devuelve el mismo fondo y el grano
      desaparece; multiply lo oscurece en cualquier fondo, al mismo coste.
      Opacidades calibradas para el mismo contraste (ΔL*) que en dark. */
-  :root[data-theme="light"] .grain{mix-blend-mode:multiply;opacity:.056}
   :root[data-theme="light"] .grain-overlay{mix-blend-mode:multiply;opacity:.14}
 </style>
 <!-- GRAIN-OVERLAY:END -->

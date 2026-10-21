@@ -19,7 +19,7 @@
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url(./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url(./fonts/space-mono/webfont/SpaceMono-700-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}   /* bold: idioma activo del footer */
 </style>
-<link rel="stylesheet" href="./css/case-study.css?v=23">
+<link rel="stylesheet" href="./css/case-study.css?v=24">
 <!-- ASSETS — hero (LCP): precarga solo la del breakpoint activo -->
 <link rel="preload" as="image" href="./assets/casestudy_DegenAnimations/01-hero.webp" media="(min-width:768px)" fetchpriority="high">
 <link rel="preload" as="image" href="./assets/casestudy_DegenAnimations/01-hero-mobile.webp" media="(max-width:767.98px)" fetchpriority="high">
@@ -43,7 +43,7 @@ if(!r[u+'react-dom@18.3.1/umd/react-dom.production.min.js'])r[u+'react-dom@18.3.
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/plus-jakarta-sans/webfont/PlusJakartaSans-200-800-normal-latin.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2">
 <script src="./vendor/support.js"></script>
-<script src="./js/case-study.js?v=24" defer></script>
+<script src="./js/case-study.js?v=25" defer></script>
 </head>
 <body>
 <x-dc>
@@ -586,7 +586,6 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 </helmet>
 <div class="qa-w" data-comp="qa-width-overlay"></div>
 <div class="page" data-screen-label="case study — Enjin×Degen Promo Content">
-  <div class="grain"></div>
   <!-- SHARED:GOO -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-60%" y="-140%" width="220%" height="380%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"></feGaussianBlur><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="g"></feColorMatrix><feComposite in="SourceGraphic" in2="g" operator="atop"></feComposite></filter></svg>
 <!-- /SHARED:GOO -->
@@ -747,7 +746,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 </div>
 </x-dc>
 <!-- SHARED:GRAIN -->
-<!-- GRAIN-OVERLAY:START — 2a capa de grano sobre el .grain original. Ajuste aprobado 2026-09-20 -->
+<!-- GRAIN-OVERLAY:START — capa de grano. Ajuste aprobado 2026-09-20; el .grain original se retiró 2026-10-21 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 <style>
   .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
@@ -758,7 +757,6 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   /* light: overlay sobre fondo claro devuelve el mismo fondo y el grano
      desaparece; multiply lo oscurece en cualquier fondo, al mismo coste.
      Opacidades calibradas para el mismo contraste (ΔL*) que en dark. */
-  :root[data-theme="light"] .grain{mix-blend-mode:multiply;opacity:.056}
   :root[data-theme="light"] .grain-overlay{mix-blend-mode:multiply;opacity:.14}
 </style>
 <!-- GRAIN-OVERLAY:END -->

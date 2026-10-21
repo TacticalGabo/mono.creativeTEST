@@ -565,7 +565,10 @@ function cs_montada(){return !document.querySelector('x-dc')&&!!document.querySe
     return {img:c,x:-pad,y:-pad,w:c.width/k,h:c.height/k};
   }
   function anim(el,n){ var a=el.getAnimations(); for(var i=0;i<a.length;i++)if(a[i].animationName===n)return a[i]; return null; }
-  var GR=[], on=false, raf=0, poll=0, last=0, mq, rm;
+  var GR=[], on=false, raf=0, poll=0, last=0, next=0, leerHasta=0, mo=null, mq, rm;
+  // (2026-10-21) 30 fps: a 60 Hz la mancha avanza <0,1 px por frame, a 30 fps no se nota y se pinta la mitad
+  // (un cuarto a 120 Hz). La cadencia se reparte sola en 75/90/144 Hz (next += INT, sin deriva).
+  var INT=1000/30;
   // caja de cada mancha (offsetLeft/Top, matriz de transform) y la del canvas que las cubre a todas en cualquier fase de blot
   function geo(gr){
     var x0=1/0, y0=1/0, x1=-1/0, y1=-1/0;
@@ -611,23 +614,31 @@ function cs_montada(){return !document.querySelector('x-dc')&&!!document.querySe
   }
   // estado de cada mancha leído del CSS (animation-play-state sigue en cascada aunque el nombre sea none):
   // así se pausa exactamente cuando pausaba su animación (.idle, .espera, espera del logo...). Opacidad = --g*, --fade-p, tema.
-  function lee(dt){
+  // (2026-10-21) Solo se lee (leer=true) tras un cambio de clase/estilo/tema en <html> o en los padres de las
+  // manchas (mira()) y durante el cruce de --fade-p (.45 s); el resto del tiempo se usa lo último leído.
+  function lee(dt,leer){
     var vivo=false;
     GR.forEach(function(gr){
       var sucio=gr.sucio; gr.sucio=false;
       gr.G.forEach(function(g){
-        var cs=getComputedStyle(g.el), op=parseFloat(cs.opacity)||0;
-        if(cs.animationPlayState.indexOf('paused')<0){ vivo=true; if(dt){ g.t+=dt; sucio=true; } }
-        if(op!==g.op){ g.op=op; sucio=true; }
+        if(leer){
+          var cs=getComputedStyle(g.el), op=parseFloat(cs.opacity)||0;
+          g.vivo=cs.animationPlayState.indexOf('paused')<0;
+          if(op!==g.op){ g.op=op; sucio=true; }
+        }
+        if(g.vivo){ vivo=true; if(dt){ g.t+=dt; sucio=true; } }
       });
       if(sucio)pinta(gr);
     });
     return vivo;
   }
+  function mira(){ leerHasta=performance.now()+700; }   // 700 = cruce de tema .45 s + margen
   function frame(now){
     raf=0; if(!on)return;
+    if(next&&now<next-1){ raf=requestAnimationFrame(frame); return; }
+    next=(next&&now-next<INT)?next+INT:now+INT;
     var dt=last?Math.min(now-last,100):0; last=now;
-    if(!lee(dt)||document.hidden){ last=0; if(!poll)poll=setTimeout(function(){ poll=0; if(on&&!raf)raf=requestAnimationFrame(frame); },150); return; }
+    if(!lee(dt,now<leerHasta)||document.hidden){ last=0; next=0; if(!poll)poll=setTimeout(function(){ poll=0; if(on&&!raf)raf=requestAnimationFrame(frame); },150); return; }
     raf=requestAnimationFrame(frame);
   }
   function arranca(){
@@ -643,9 +654,19 @@ function cs_montada(){return !document.querySelector('x-dc')&&!!document.querySe
       });
       geo(gr); gr.sucio=true;
     });
-    lee(0);
+    if(!mo){
+      mo=new MutationObserver(mira);
+      var vistos=[];
+      GR.forEach(function(gr){
+        for(var n=gr.par;n&&n.nodeType===1;n=n.parentElement){
+          if(vistos.indexOf(n)>=0)break; vistos.push(n);
+          mo.observe(n,{attributes:true,attributeFilter:['class','style','data-theme']});
+        }
+      });
+    }
+    mira(); lee(0,true);
     document.documentElement.classList.add('glow-cv');
-    on=true; last=0; raf=requestAnimationFrame(frame);
+    on=true; last=0; next=0; raf=requestAnimationFrame(frame);
   }
   function para(){
     if(!on)return; on=false; if(raf)cancelAnimationFrame(raf); raf=0;

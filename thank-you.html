@@ -18,7 +18,7 @@
 </style>
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/plus-jakarta-sans/webfont/PlusJakartaSans-200-800-normal-latin.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2">
-<link rel="stylesheet" href="./css/case-study.css?v=23">
+<link rel="stylesheet" href="./css/case-study.css?v=24">
 <link rel="stylesheet" href="./css/thank-you.css?v=24">
 <!-- (2026-10-04) CARGA: React desde el propio dominio, igual que el home (mismos bytes,
      sha384 idéntico al SRI de support.js). Además, con window.__resources definido
@@ -48,7 +48,6 @@ if(!r[u+'react-dom@18.3.1/umd/react-dom.production.min.js'])r[u+'react-dom@18.3.
 <x-dc>
 <helmet></helmet>
 <div class="page" data-screen-label="thank-you">
-  <div class="grain"></div>
   <!-- SHARED:GOO -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-60%" y="-140%" width="220%" height="380%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"></feGaussianBlur><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="g"></feColorMatrix><feComposite in="SourceGraphic" in2="g" operator="atop"></feComposite></filter></svg>
 <!-- /SHARED:GOO -->
@@ -390,7 +389,7 @@ if(!r[u+'react-dom@18.3.1/umd/react-dom.production.min.js'])r[u+'react-dom@18.3.
 </script>
 <!-- /SHARED:JS-CURSOR -->
 <!-- SHARED:GRAIN -->
-<!-- GRAIN-OVERLAY:START — 2a capa de grano sobre el .grain original. Ajuste aprobado 2026-09-20 -->
+<!-- GRAIN-OVERLAY:START — capa de grano. Ajuste aprobado 2026-09-20; el .grain original se retiró 2026-10-21 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 <style>
   .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
@@ -401,7 +400,6 @@ if(!r[u+'react-dom@18.3.1/umd/react-dom.production.min.js'])r[u+'react-dom@18.3.
   /* light: overlay sobre fondo claro devuelve el mismo fondo y el grano
      desaparece; multiply lo oscurece en cualquier fondo, al mismo coste.
      Opacidades calibradas para el mismo contraste (ΔL*) que en dark. */
-  :root[data-theme="light"] .grain{mix-blend-mode:multiply;opacity:.056}
   :root[data-theme="light"] .grain-overlay{mix-blend-mode:multiply;opacity:.14}
 </style>
 <!-- GRAIN-OVERLAY:END -->
