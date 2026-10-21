@@ -724,9 +724,11 @@ html.js main [data-asset]:not(.ld):not([data-asset="hero"]):not(.avatar){backgro
    cada breakpoint). Oculta con opacity, NO con clip-path: un clip-path propio deja el área
    de intersección en 0 y el IntersectionObserver nunca dispara. */
 html.js main .media:not(.ba__img){opacity:0}
+/* (2026-10-21) ir-pop en backwards, no both: su escala final (1) se quedaba aplicada y arrastraba el grano fijo
+   de la imagen (::before position:fixed); sin relleno final se ve igual (scale 1 = sin escala). */
 html.js main .media.ir-in:not(.ba__img){opacity:1;
   animation:ir-fade 1s cubic-bezier(.33,0,.2,1) var(--ir-d,0s) both,
-            ir-pop 1s var(--ir-out) var(--ir-d,0s) both,
+            ir-pop 1s var(--ir-out) var(--ir-d,0s) backwards,
             ir-round 1s var(--ir-snap) calc(var(--ir-d,0s) + .35s) both}
 html.js main .media.ir-in:not(.ba__img) .csc__inner{
   animation:ir-fade 1.1s cubic-bezier(.33,0,.2,1) calc(var(--ir-d,0s) + .35s) both,
@@ -763,7 +765,7 @@ html.js main .cs-hero .fx-line{animation:fx-in-b .7s ease both;animation-delay:c
    la página libre y lo anima (clase .ir-r + Web Animations); si no, saltaría de golpe. */
 html.js main .cs-hero .media{opacity:1;
   animation:ir-fade 1s cubic-bezier(.33,0,.2,1) .1s both,
-            ir-pop 1s var(--ir-out) .1s both}
+            ir-pop 1s var(--ir-out) .1s backwards}
 @media (prefers-reduced-motion:no-preference){html.js main .cs-hero .media:not(.ir-r){border-radius:0}}
 /* el fade del hero espera a que su imagen esté decodificada (html.hero-ok, script del <head>; tope 2,5 s):
    si la imagen llegaba tras el fade, aparecía de golpe */

@@ -19,7 +19,7 @@
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url(./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url(./fonts/space-mono/webfont/SpaceMono-700-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}   /* bold: idioma activo del footer */
 </style>
-<link rel="stylesheet" href="./css/case-study.css?v=24">
+<link rel="stylesheet" href="./css/case-study.css?v=25">
 <!-- ASSETS — hero (LCP): precarga solo la del breakpoint activo -->
 <link rel="preload" as="image" href="./assets/casestudy_PanamaConventionCenter/01-hero.webp" media="(min-width:768px)" fetchpriority="high">
 <link rel="preload" as="image" href="./assets/casestudy_PanamaConventionCenter/01-hero-mobile.webp" media="(max-width:767.98px)" fetchpriority="high">
@@ -766,38 +766,33 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 <!-- GRAIN-OVERLAY:START — capa de grano. Ajuste aprobado 2026-09-20; el .grain original se retiró 2026-10-21 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 <style>
-  /* (2026-10-21) Transparencia normal, sin mix-blend-mode: un blend obliga a la GPU a leer y
-     volver a mezclar lo de debajo en cada frame de scroll; así solo se dibuja la textura encima.
-     Texturas sacadas de texture-grain.png (graingen.py):
-     · light: negro con alfa 1-g a opacidad .14 = IDÉNTICO al multiply .14 de antes.
-     · dark : réplica del overlay .42 en UNA imagen (exacta sobre el fondo #101913): puntos negros
-       y puntos del verde del fondo aclarado. Va en el fondo de la página (ver abajo). */
-  .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
-    background-image:url('./assets/shared/texture-grain-dark.png');background-repeat:repeat;
-    background-size:281.6px 281.6px;   /* grano en pantalla 1.1 px */
-    will-change:transform;
+  /* (2026-10-21) Grano sin mix-blend-mode (un blend obliga a la GPU a leer y volver a mezclar lo de debajo en
+     cada frame de scroll), FIJO en pantalla como el overlay de antes y sin tapar textos. Misma estructura en light y dark.
+     Texturas: scripts/graingen.py a partir de texture-grain.png (mismo patrón de ruido).
+     · Fondo: .grain-overlay va DETRÁS del contenido (z-index:-1) con texture-grain-dark.png (intensidad 2,
+       oscuros 1, densidad 55 %, 0.6 px; en light texture-grain-light.png). body y .page sin color de fondo (lo pinta html), así el grano queda
+       detrás de textos, líneas e imágenes y se ve a través de las manchas.
+     · Imágenes (.shot en el home, .media en case studies): texture-grain-img.png (2.5 / oscuros .15 / 100 % /
+       0.5 px), fijo, visto por una ventana: clip-path:border-box sigue el border-radius y recorta también al
+       hijo fijo. Se pinta una vez; en el scroll la GPU solo mueve la ventana. */
+  .grain-overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;will-change:transform;
+    background:url('./assets/shared/texture-grain-dark.png') 0 0/153.6px 153.6px repeat;
     min-height:100lvh}                 /* móvil: cubre también la franja que destapa la barra del navegador al scrollear */
-  :root[data-theme="light"] .grain-overlay{background-image:url('./assets/shared/texture-grain-light.png');opacity:.14}
-  /* dark (2026-10-21): el grano queda FIJO en pantalla como el overlay, pero sin mezcla y sin tapar textos.
-     · Fondo: .grain-overlay pasa DETRÁS del contenido (z-index:-1) con la textura del fondo (intensidad 2,
-       densidad 55 %, 0.6 px). .page deja su fondo transparente (el color lo pinta body), así el grano
-       queda detrás de textos, líneas e imágenes y se ve a través de las manchas (opacidad .03-.40).
-     · Imágenes del home (.shot): grano propio (2.5 / oscuros .15 / 100 % / 0.5 px), fijo, visto por una
-       ventana: clip-path:border-box sigue el border-radius y recorta también al hijo fijo. Se pinta una
-       vez; en el scroll la GPU solo mueve la ventana. Case studies (.media): grano propio, va con la imagen. */
-  :root:not([data-theme="light"]) .grain-overlay{z-index:-1;background-image:url('./assets/shared/texture-grain-dark.png');background-size:153.6px 153.6px}
-  :root:not([data-theme="light"]) :is(body,.page){background-color:transparent}   /* html pinta el color; body tapaba la capa z-index:-1 */
-  /* .grid2 .col tiene contain:size layout (frontera de layout del mosaico, desktop): 'layout' convierte la
-     columna en referencia de lo fijo y el grano de esas imágenes se movía con ella. En dark se deja solo size. */
-  @media (min-width:768px){:root:not([data-theme="light"]) .grid2 .col{contain:size}}
-  :root:not([data-theme="light"]) .shot{clip-path:border-box}
-  :root:not([data-theme="light"]) .shot::before{content:"";position:fixed;inset:0;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
-  .media{position:relative}
-  :root:not([data-theme="light"]) .media::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
-  /* precarga las dos texturas: el cambio de tema no espera a la descarga */
+  :root[data-theme="light"] .grain-overlay{background-image:url('./assets/shared/texture-grain-light.png');background-size:115.2px 115.2px}   /* light: 3.35 / oscuros .15 / 100 % / 0.45 px */
+  /* precarga la textura del otro tema: el cambio de tema no espera a la descarga */
   .grain-overlay::before{content:"";position:absolute;width:1px;height:1px;opacity:0;
     background-image:url('./assets/shared/texture-grain-dark.png'),url('./assets/shared/texture-grain-light.png')}
+  :is(body,.page){background-color:transparent}   /* html pinta el color; body tapaba la capa z-index:-1 */
+  /* .grid2 .col (mosaico, desktop): contain:size en vez de size+layout. Con 'layout' la columna pasa a ser la
+     referencia de lo fijo y el grano de esas imágenes se movía con ella (medido: el layout extra es despreciable). */
+  @media (min-width:768px){.grid2 .col{contain:size}}
+  .shot{clip-path:border-box}
+  .shot::before{content:"";position:fixed;inset:0;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
+  /* z-index:1 = encima de los <video> (.vid>video es absoluto). Las de cortina (data-reveal="wipe") quitan su
+     clip-path al terminar: se repone la ventana. */
+  .media{position:relative;clip-path:border-box}
+  :root.js main [data-reveal="wipe"] .media.ir-done:not(.ba__img){clip-path:border-box}
+  .media::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
 </style>
 <!-- GRAIN-OVERLAY:END -->
 <!-- /SHARED:GRAIN -->
