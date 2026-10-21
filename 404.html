@@ -629,9 +629,8 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
      volver a mezclar lo de debajo en cada frame de scroll; así solo se dibuja la textura encima.
      Texturas sacadas de texture-grain.png (graingen.py):
      · light: negro con alfa 1-g a opacidad .14 = IDÉNTICO al multiply .14 de antes.
-     · dark : puntos negros + claros (verde menta) calibrados contra el overlay .42 sobre #101913
-       y sobre imágenes del sitio: misma fuerza de grano en fondo e imágenes; no es píxel-exacto
-       (overlay depende del brillo de debajo, la transparencia normal no). */
+     · dark : imita el overlay .42 con solo los píxeles claros de la textura (mismo patrón),
+       color claro con alfa .22*(2s-1). No es píxel-exacto: overlay depende del brillo de debajo. */
   .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
     background-image:url('./assets/shared/texture-grain-dark.png');background-repeat:repeat;
     background-size:281.6px 281.6px;   /* grano en pantalla 1.1 px */
