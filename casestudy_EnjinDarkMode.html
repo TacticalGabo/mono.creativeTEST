@@ -309,20 +309,23 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     st.done=nav;
   }
   var BLUR=null;
-  function goo(b,p,x,y){
+  /* (2026-10-21) r y ow llegan medidos desde la fase de lectura de frame(): sin layout síncrono tras
+     escribir. Solo se escribe lo que cambia: un botón lejos y ya apagado (st.apagado) no se toca, y el
+     desenfoque se compara con el atributo real (contact.js también escribe en #goo). */
+  function goo(b,p,x,y,r,ow){
     var st=parts(b); if(!st||!st.dot)return;
     if(p>0){
-      var r=b.getBoundingClientRect();
-      var k=(b.offsetWidth&&r.width)?b.offsetWidth/r.width:1;
+      if(!r){ r=b.getBoundingClientRect(); ow=b.offsetWidth; }
+      var k=(ow&&r.width)?ow/r.width:1;
       st.dot.style.transform='translate3d('+((x-r.left)*k)+'px,'+((y-r.top)*k)+'px,0) translate(-50%,-50%)';
       st.dot.style.opacity=p.toFixed(3);
-      b.classList.add('goo');
+      if(st.apagado!==false){ b.classList.add('goo'); st.apagado=false; }
       if(!BLUR)BLUR=document.querySelector('#goo feGaussianBlur');
-      if(BLUR)BLUR.setAttribute('stdDeviation',(0.2+5.8*p).toFixed(2));
+      var sd=(0.2+5.8*p).toFixed(2);
+      if(BLUR&&BLUR.getAttribute('stdDeviation')!==sd)BLUR.setAttribute('stdDeviation',sd);
       colors(st,true);
     } else {
-      st.dot.style.opacity='0';
-      b.classList.remove('goo');
+      if(st.apagado!==true){ st.dot.style.opacity='0'; b.classList.remove('goo'); st.apagado=true; }
       if(!st.hover)colors(st,false);
     }
   }
@@ -335,8 +338,8 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       // fase de LECTURA primero: antes se leía un rect, se escribía y se volvía a
       // leer, tres layouts síncronos por frame de scroll (y con el SVG del
       // clúster sucio, así que cada uno recalculaba de más)
-      var rects=[];
-      if(ev)for(var q=0;q<list.length;q++)rects[q]=list[q].getBoundingClientRect();
+      var rects=[], ows=[];
+      if(ev)for(var q=0;q<list.length;q++){ rects[q]=list[q].getBoundingClientRect(); ows[q]=list[q].offsetWidth; }
       for(var i=0;list.length>i;i++){
         var b=list[i];
         if(!ev){ if(b!==focused)set(b,false); goo(b,0); continue;}
@@ -348,7 +351,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
         var p=inside?1:(d2<=ZONE*ZONE?1-Math.sqrt(d2)/ZONE:0);
         if(p>0)any_near=p>any_near?p:any_near;
         if(!(b===focused&&!inside))set(b,inside);
-        if(FINEnow())goo(b,p,ev.x,ev.y);
+        if(FINEnow())goo(b,p,ev.x,ev.y,r,ows[i]);
       }
       window.__mcGooNear=any_near;
     }
@@ -453,11 +456,14 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     // El punto verde solo existe en desktop con ratón. En un teléfono el toque
     // genera un mousemove sintético y el punto aparecía y se quedaba puesto,
     // estorbando. Aquí ni siquiera se crea el elemento.
+    // (2026-10-21) la media query se crea una vez (su .matches sigue al día) y la opacidad
+    // del punto solo se escribe si cambia
+    var mq=window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)');
     var fine=function(){
-      return !!(window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches)
-        && window.innerWidth>=768;
+      return !!(mq && mq.matches) && window.innerWidth>=768;
     };
-    var d=null;
+    var d=null, op=null;
+    function opac(v){ if(d&&v!==op){ d.style.opacity=v; op=v; } }
     function dot(){
       if(d)return d;
       d=document.createElement('div'); d.id='cursor-dot';
@@ -465,12 +471,12 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       return d;
     }
     document.addEventListener('mousemove',function(e){
-      if(!fine()){ if(d)d.style.opacity='0'; return; }
+      if(!fine()){ opac('0'); return; }
       var el=dot();
       el.style.transform='translate3d('+e.clientX+'px,'+e.clientY+'px,0) translate(-50%,-50%)';
-      el.style.opacity=e.target&&e.target.closest&&e.target.closest('.page')?(1-(window.__mcGooNear||0)).toFixed(3):'0';
+      opac(e.target&&e.target.closest&&e.target.closest('.page')?(1-(window.__mcGooNear||0)).toFixed(3):'0');
     });
-    document.addEventListener('mouseleave',function(){if(d)d.style.opacity='0';});
+    document.addEventListener('mouseleave',function(){opac('0');});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
