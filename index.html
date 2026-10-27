@@ -1333,8 +1333,6 @@ html.ov-arm .oval.ov-in span{transition:color .5s ease,opacity .4s ease .65s}
     // la foto. No vale un valor fijo porque las pestañas meten imágenes de
     // aspectos muy distintos (de 1,25 a 1,78), así que se toma el aspecto real
     // de cada imagen. Con la caja al aspecto de la foto, el cover ya no recorta.
-    var BGPOS={'./assets/home/enjin-beam-nft-qr-platform.webp':'center min(calc(50% + 40px),0px)',
-               './assets/home/sensive-saas-illustration.webp':'center min(calc(50% + 20px),0px)'};
     function encaja(shot){
       if(window.innerWidth>=768)return;
       var pi=shot.querySelector('picture>img'), u=pi&&[0,0,pi.currentSrc||pi.src];   /* (2026-10-27) la imagen ahora es <img> */
