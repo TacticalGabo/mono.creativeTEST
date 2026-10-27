@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+<meta name="robots" content="noindex, nofollow">
+<script src="js/analytics.js"></script>
 <meta charset="utf-8">
 <script>/* .js síncrono (antes lo ponía case-study.js, diferido: según qué llegaba antes, el hero se veía, se ocultaba y reaparecía) + tema elegido en el toggle (home o entry); sin elección = light */document.documentElement.classList.add('js');try{localStorage.removeItem('mc-theme');var t=sessionStorage.getItem('mc-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<link rel="icon" type="image/svg+xml" href="./assets/shared/logo-favicon-48x29.svg?v=3">
-<title>Enjin Community — Case study · mono.creative</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/assets/shared/favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/shared/favicon-192.png?v=4">
+<link rel="apple-touch-icon" href="/assets/shared/apple-touch-icon.png?v=4">
+<title>Enjin — 3D Brand Mascot Design Case Study · mono.creative</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Enjin: 3D scenes and animations that brought Enjin's cross-game items and its mascot to life.">
+<meta name="theme-color" content="#f8fbf9">
+<script>/* (2026-10-21) móvil: la barra del navegador toma el fondo del tema (dark #101913 / light #f8fbf9) y lo sigue al cambiar (toggle, swap por scroll, vuelta con atrás) */(function(){var h=document.documentElement,m=document.querySelector('meta[name="theme-color"]');if(!m||!window.MutationObserver)return;function c(){m.setAttribute('content',h.getAttribute('data-theme')==='light'?'#f8fbf9':'#101913')}c();new MutationObserver(c).observe(h,{attributes:true,attributeFilter:['data-theme']})})()</script>
+<meta name="description" content="Enjin Community: 3D mascot animation and scenes that brought Enjin&#x27;s crypto mascot, Blobby, and its cross-game items to life.">
 <!-- (2026-10-04) CARGA: fuentes del propio dominio (./fonts, mismos woff2 de Google:
      variable 200-800, subsets latin + latin-ext con unicode-range) en lugar del CSS de
      Google Fonts, que bloqueaba el render y abría 2 conexiones externas. -->
@@ -17,10 +24,10 @@
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url(./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url(./fonts/space-mono/webfont/SpaceMono-700-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}   /* bold: idioma activo del footer */
 </style>
-<link rel="stylesheet" href="./css/case-study.css?v=21">
+<link rel="stylesheet" href="./css/case-study.css?v=28">
 <!-- ASSETS — hero (LCP): precarga solo la del breakpoint activo -->
-<link rel="preload" as="image" href="./assets/casestudy_Enjin3D/01-hero.webp" media="(min-width:768px)" fetchpriority="high">
-<link rel="preload" as="image" href="./assets/casestudy_Enjin3D/01-hero-mobile.webp" media="(max-width:767.98px)" fetchpriority="high">
+<link rel="preload" as="image" href="./assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby.webp" media="(min-width:768px)" fetchpriority="high">
+<link rel="preload" as="image" href="./assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby-mobile.webp" media="(max-width:767.98px)" fetchpriority="high">
 <script>/* hero: avisa (html.hero-ok) cuando la imagen del breakpoint activo está decodificada; el CSS espera a esto para su fade */(function(){var d=document.documentElement,ok=function(){d.classList.add('hero-ok')},l=[].filter.call(document.querySelectorAll('link[rel=preload][as=image]'),function(x){return !x.media||matchMedia(x.media).matches})[0];if(!l)return ok();var i=new Image();i.src=l.href;(i.decode?i.decode():new Promise(function(r){i.onload=i.onerror=r})).then(ok,ok);setTimeout(ok,2500)})()</script>
 <!-- (2026-10-04) CARGA: React desde el propio dominio, igual que el home (mismos bytes,
      sha384 idéntico al SRI de support.js). Además, con window.__resources definido
@@ -37,11 +44,24 @@ if(!r[u+'react-dom@18.3.1/umd/react-dom.production.min.js'])r[u+'react-dom@18.3.
 <link rel="preload" as="script" href="./vendor/react.production.min.js">
 <link rel="preload" as="script" href="./vendor/react-dom.production.min.js">
 <link rel="preload" as="fetch" crossorigin href="./components/brandmark-fusion.dc.html">
-<link rel="preload" as="fetch" crossorigin href="./components/header-logo-hover.dc.html">
+<link rel="preload" as="fetch" crossorigin href="./components/header-logo-hover.dc.html" media="(min-width:768px)">   <!-- (2026-10-21) solo desktop: en móvil ese logo va en display:none y la precarga competía con el hero -->
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/plus-jakarta-sans/webfont/PlusJakartaSans-200-800-normal-latin.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2">
 <script src="./vendor/support.js"></script>
-<script src="./js/case-study.js?v=22" defer></script>
+<script src="./js/case-study.js?v=28" defer></script>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="mono.creative">
+<meta property="og:title" content="Enjin — 3D Brand Mascot Design Case Study · mono.creative">
+<meta property="og:description" content="Enjin Community: 3D mascot animation and scenes that brought Enjin&#x27;s crypto mascot, Blobby, and its cross-game items to life.">
+<meta property="og:image" content="https://monocreative.studio/assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby.webp">
+<meta property="og:image:alt" content="Blobby, Enjin&#x27;s 3D brand mascot, flying with rocket boots">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Enjin — 3D Brand Mascot Design Case Study · mono.creative">
+<meta name="twitter:description" content="Enjin Community: 3D mascot animation and scenes that brought Enjin&#x27;s crypto mascot, Blobby, and its cross-game items to life.">
+<meta name="twitter:image" content="https://monocreative.studio/assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby.webp">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Enjin 3D", "description": "Enjin Community: 3D mascot animation and scenes that brought Enjin's crypto mascot, Blobby, and its cross-game items to life.", "genre": "3D brand mascot design", "url": "https://monocreative.studio/casestudy_Enjin3D", "creator": {"@type": "Organization", "name": "mono.creative", "url": "https://monocreative.studio/"}, "about": "Enjin", "dateCreated": "2025", "image": "https://monocreative.studio/assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby.webp"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://monocreative.studio/"}, {"@type": "ListItem", "position": 2, "name": "Enjin 3D", "item": "https://monocreative.studio/casestudy_Enjin3D"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ImageObject", "contentUrl": "https://monocreative.studio/assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby.webp", "name": "Blobby, Enjin's 3D brand mascot, flying with rocket boots", "description": "Blobby, Enjin's 3D brand mascot, flying with rocket boots", "isPartOf": {"@type": "CreativeWork", "url": "https://monocreative.studio/casestudy_Enjin3D"}}, {"@type": "ImageObject", "contentUrl": "https://monocreative.studio/assets/casestudy_Enjin3D/enjin-blobby-3d-poses.webp", "name": "Blobby 3D mascot with a laptop and holding a heart", "description": "Blobby 3D mascot with a laptop and holding a heart", "isPartOf": {"@type": "CreativeWork", "url": "https://monocreative.studio/casestudy_Enjin3D"}}, {"@type": "ImageObject", "contentUrl": "https://monocreative.studio/assets/casestudy_Enjin3D/enjin-blobby-3d-model-poses.webp", "name": "Four 3D poses of Blobby, the Enjin mascot", "description": "Four 3D poses of Blobby, the Enjin mascot", "isPartOf": {"@type": "CreativeWork", "url": "https://monocreative.studio/casestudy_Enjin3D"}}, {"@type": "ImageObject", "contentUrl": "https://monocreative.studio/assets/casestudy_Enjin3D/enjin-blobby-2d-thinking.webp", "name": "Blobby in 2D cartoon style, thinking at the office", "description": "Blobby in 2D cartoon style, thinking at the office", "isPartOf": {"@type": "CreativeWork", "url": "https://monocreative.studio/casestudy_Enjin3D"}}]}</script>
 </head>
 <body>
 <x-dc>
@@ -110,12 +130,9 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
        Si cambias la extensión (.png/.jpg), cámbiala solo aquí.
        Sin archivo, el hueco muestra el color placeholder (--media).
    ========================================================================== */
-[data-asset="hero"]{background-image:url(./assets/casestudy_Enjin3D/01-hero.webp)}
-@media (max-width:767.98px){[data-asset="hero"]{background-image:url(./assets/casestudy_Enjin3D/01-hero-mobile.webp)}}
+/* hero: ahora es <picture><img> dentro de .media (SEO); mismo cover/center que el fondo */
+[data-asset]>picture{position:absolute;inset:0;z-index:0;display:block;overflow:hidden;border-radius:inherit;pointer-events:none}[data-asset]>picture>img{display:block;border-radius:inherit;width:100%;height:100%;object-fit:cover;object-position:center}.csc__inner[data-asset]{position:relative}
 [data-asset="hero"]{background-color:transparent}
-[data-asset="styles-1"]{background-image:url(./assets/casestudy_Enjin3D/03-styles-1.webp)}
-[data-asset="styles-2"]{background-image:url(./assets/casestudy_Enjin3D/03-styles-2.webp)}
-[data-asset="blobby-2"]{background-image:url(./assets/casestudy_Enjin3D/07-blobby-2.webp)}
 /* tamaños y bloques propios de este caso (Figma 11. Enjin 3D, 1440 / 360) */
 .cs-styles{padding:56px 0}
 .ts__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:32px}
@@ -152,12 +169,10 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   // los calc() de --m y --mnav). Juntas se comían un tercio del hilo en móvil.
   // Ahora se mide cuando puede haber cambiado —resize, load, ResizeObserver—
   // y solo se escribe si el valor es distinto.
-  var last=null, qa=null, qadone=false;
+  var last=null;
   function u(){
     var sb=window.innerWidth-r.clientWidth;
     if(sb!==last){ last=sb; r.style.setProperty('--sbw',sb+'px'); }
-    if(!qadone){ qa=document.querySelector('.qa-w'); qadone=!!qa; }
-    if(qa){ var txt=r.clientWidth+' px'; if(qa.textContent!==txt)qa.textContent=txt; }
   }
   addEventListener('resize',u);addEventListener('load',u);
   if(window.ResizeObserver){ try{ new ResizeObserver(u).observe(r); }catch(e){} }
@@ -308,20 +323,23 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     st.done=nav;
   }
   var BLUR=null;
-  function goo(b,p,x,y){
+  /* (2026-10-21) r y ow llegan medidos desde la fase de lectura de frame(): sin layout síncrono tras
+     escribir. Solo se escribe lo que cambia: un botón lejos y ya apagado (st.apagado) no se toca, y el
+     desenfoque se compara con el atributo real (contact.js también escribe en #goo). */
+  function goo(b,p,x,y,r,ow){
     var st=parts(b); if(!st||!st.dot)return;
     if(p>0){
-      var r=b.getBoundingClientRect();
-      var k=(b.offsetWidth&&r.width)?b.offsetWidth/r.width:1;
+      if(!r){ r=b.getBoundingClientRect(); ow=b.offsetWidth; }
+      var k=(ow&&r.width)?ow/r.width:1;
       st.dot.style.transform='translate3d('+((x-r.left)*k)+'px,'+((y-r.top)*k)+'px,0) translate(-50%,-50%)';
       st.dot.style.opacity=p.toFixed(3);
-      b.classList.add('goo');
+      if(st.apagado!==false){ b.classList.add('goo'); st.apagado=false; }
       if(!BLUR)BLUR=document.querySelector('#goo feGaussianBlur');
-      if(BLUR)BLUR.setAttribute('stdDeviation',(0.2+5.8*p).toFixed(2));
+      var sd=(0.2+5.8*p).toFixed(2);
+      if(BLUR&&BLUR.getAttribute('stdDeviation')!==sd)BLUR.setAttribute('stdDeviation',sd);
       colors(st,true);
     } else {
-      st.dot.style.opacity='0';
-      b.classList.remove('goo');
+      if(st.apagado!==true){ st.dot.style.opacity='0'; b.classList.remove('goo'); st.apagado=true; }
       if(!st.hover)colors(st,false);
     }
   }
@@ -334,8 +352,8 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       // fase de LECTURA primero: antes se leía un rect, se escribía y se volvía a
       // leer, tres layouts síncronos por frame de scroll (y con el SVG del
       // clúster sucio, así que cada uno recalculaba de más)
-      var rects=[];
-      if(ev)for(var q=0;q<list.length;q++)rects[q]=list[q].getBoundingClientRect();
+      var rects=[], ows=[];
+      if(ev)for(var q=0;q<list.length;q++){ rects[q]=list[q].getBoundingClientRect(); ows[q]=list[q].offsetWidth; }
       for(var i=0;list.length>i;i++){
         var b=list[i];
         if(!ev){ if(b!==focused)set(b,false); goo(b,0); continue;}
@@ -347,7 +365,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
         var p=inside?1:(d2<=ZONE*ZONE?1-Math.sqrt(d2)/ZONE:0);
         if(p>0)any_near=p>any_near?p:any_near;
         if(!(b===focused&&!inside))set(b,inside);
-        if(FINEnow())goo(b,p,ev.x,ev.y);
+        if(FINEnow())goo(b,p,ev.x,ev.y,r,ows[i]);
       }
       window.__mcGooNear=any_near;
     }
@@ -385,7 +403,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       if(!hb||hb.dataset.pf)return;
       hb.dataset.pf='1';
       var u=hb.getAttribute('data-href'), lst=[u];
-      if(/contact\.html/.test(u))lst=lst.concat(['./css/contact.css','./js/contact.js','./js/contact-rules.js','./js/contact-config.js']);
+      if(/contact(\.html)?(?:$|[?#])/.test(u))lst=lst.concat(['./css/contact.css','./js/contact.js','./js/contact-rules.js','./js/contact-config.js']);
       lst.forEach(function(h){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l); });
     }
     document.addEventListener('pointerover',precarga,{passive:true});
@@ -452,11 +470,14 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     // El punto verde solo existe en desktop con ratón. En un teléfono el toque
     // genera un mousemove sintético y el punto aparecía y se quedaba puesto,
     // estorbando. Aquí ni siquiera se crea el elemento.
+    // (2026-10-21) la media query se crea una vez (su .matches sigue al día) y la opacidad
+    // del punto solo se escribe si cambia
+    var mq=window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)');
     var fine=function(){
-      return !!(window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches)
-        && window.innerWidth>=768;
+      return !!(mq && mq.matches) && window.innerWidth>=768;
     };
-    var d=null;
+    var d=null, op=null;
+    function opac(v){ if(d&&v!==op){ d.style.opacity=v; op=v; } }
     function dot(){
       if(d)return d;
       d=document.createElement('div'); d.id='cursor-dot';
@@ -464,12 +485,12 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       return d;
     }
     document.addEventListener('mousemove',function(e){
-      if(!fine()){ if(d)d.style.opacity='0'; return; }
+      if(!fine()){ opac('0'); return; }
       var el=dot();
       el.style.transform='translate3d('+e.clientX+'px,'+e.clientY+'px,0) translate(-50%,-50%)';
-      el.style.opacity=e.target&&e.target.closest&&e.target.closest('.page')?(1-(window.__mcGooNear||0)).toFixed(3):'0';
+      opac(e.target&&e.target.closest&&e.target.closest('.page')?(1-(window.__mcGooNear||0)).toFixed(3):'0');
     });
-    document.addEventListener('mouseleave',function(){if(d)d.style.opacity='0';});
+    document.addEventListener('mouseleave',function(){opac('0');});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -627,9 +648,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 })();
 </script>
 </helmet>
-<div class="qa-w" data-comp="qa-width-overlay"></div>
 <div class="page" data-screen-label="case study — Enjin">
-  <div class="grain"></div>
   <!-- SHARED:GOO -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-60%" y="-140%" width="220%" height="380%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"></feGaussianBlur><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="g"></feColorMatrix><feComposite in="SourceGraphic" in2="g" operator="atop"></feComposite></filter></svg>
 <!-- /SHARED:GOO -->
@@ -637,28 +656,28 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   <!-- SHARED:MENU -->
 <div class="mm" id="mm">
     <nav class="mm-nav" aria-label="Menu">
-      <a class="mm-link on" href="./index.html#work"><span>Work</span><span class="mm-dot"></span></a>
-      <a class="mm-link" href="./index.html#about">About</a>
-      <a class="mm-link" href="./index.html#services">Services</a>
+      <a class="mm-link on" href="./#work"><span>Work</span><span class="mm-dot"></span></a>
+      <a class="mm-link" href="./#about">About</a>
+      <a class="mm-link" href="./#services">Services</a>
     </nav>
-    <a class="mm-cta" href="./contact.html"><svg class="mm-cta-shape" viewBox="0 0 280 50" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M255.3011 0C268.9416 0 280 11.0583 280 24.699C280 38.3397 268.9416 49.398 255.3011 49.398H62.7945C52.2225 49.398 43.2026 42.755 39.6789 33.416C37.0679 42.3441 30.4084 49.0158 22.2414 49.9026C20.8245 50.0562 19.3997 50.0279 17.9875 49.8189C7.1948 48.2264 -0.6894 36.5739 0.0477 23.3039C0.7865 10.0336 9.8873 -0.2063 20.758 0.0035C29.3756 0.1699 36.712 6.8593 39.5789 16.2482C43.0302 6.7691 52.122 0 62.7945 0H255.3011Z"/></svg><svg class="mm-cta-arr" width="9.777" height="6.693" viewBox="0 0 9.77705 6.69316" fill="none" aria-hidden="true"><path d="M0 3.34658H9M5.47413 6.31042L9 3.34658L5.47413 0.38274"/></svg><span>Let's Talk</span></a>
+    <a class="mm-cta" href="./contact"><svg class="mm-cta-shape" viewBox="0 0 280 50" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M255.3011 0C268.9416 0 280 11.0583 280 24.699C280 38.3397 268.9416 49.398 255.3011 49.398H62.7945C52.2225 49.398 43.2026 42.755 39.6789 33.416C37.0679 42.3441 30.4084 49.0158 22.2414 49.9026C20.8245 50.0562 19.3997 50.0279 17.9875 49.8189C7.1948 48.2264 -0.6894 36.5739 0.0477 23.3039C0.7865 10.0336 9.8873 -0.2063 20.758 0.0035C29.3756 0.1699 36.712 6.8593 39.5789 16.2482C43.0302 6.7691 52.122 0 62.7945 0H255.3011Z"/></svg><svg class="mm-cta-arr" width="9.777" height="6.693" viewBox="0 0 9.77705 6.69316" fill="none" aria-hidden="true"><path d="M0 3.34658H9M5.47413 6.31042L9 3.34658L5.47413 0.38274"/></svg><span>Let's Talk</span></a>
   </div>
 <!-- /SHARED:MENU -->
 
   <!-- SHARED:NAV -->
 <header class="nav" data-comp="nav">
-    <a class="nav-logo" href="./index.html" aria-label="mono.creative — home">
+    <a class="nav-logo" href="./" aria-label="mono.creative — home">
       <span class="nav-anim-m"><dc-import name="brandmark-fusion" align="left" hint-size="100%,100%"></dc-import></span>
       <span class="nav-anim d-only"><dc-import name="header-logo-hover" hint-size="100%,100%"></dc-import></span>
     </a>
     <div class="nav-right">
       <div class="nav-links">
-        <a class="nav-link" href="./index.html#work">Work</a>
-        <a class="nav-link" href="./index.html#about">About</a>
-        <a class="nav-link" href="./index.html#services">Services</a>
+        <a class="nav-link" href="./#work">Work</a>
+        <a class="nav-link" href="./#about">About</a>
+        <a class="nav-link" href="./#services">Services</a>
       </div>
       <button class="theme-toggle" type="button" aria-label="Toggle theme" aria-pressed="true"><svg width="18" height="18" viewBox="-0.25 -0.25 18 18" fill="none" aria-hidden="true"><path class="tt-half" d="M8.75 0.75C10.8717 0.75 12.9066 1.59285 14.4069 3.09315C15.9071 4.59344 16.75 6.62827 16.75 8.75C16.75 10.8717 15.9071 12.9066 14.4069 14.4069C12.9066 15.9071 10.8717 16.75 8.75 16.75V0.75Z" fill="currentColor"/><path d="M8.75 16.75C13.1683 16.75 16.75 13.1683 16.75 8.75C16.75 4.33172 13.1683 0.75 8.75 0.75C4.33172 0.75 0.75 4.33172 0.75 8.75C0.75 13.1683 4.33172 16.75 8.75 16.75Z" stroke="currentColor" stroke-width="1.5"/></svg></button>
-      <div data-href="./contact.html" class="btn nav-btn" data-h="48" data-pad="6" data-shift="5" data-comp="button/dark" role="button" tabindex="0">
+      <div data-href="./contact" class="btn nav-btn" data-h="48" data-pad="6" data-shift="5" data-comp="button/dark" role="button" tabindex="0">
         <div class="btn-fluid"><svg class="btn-shape" width="158" height="48" viewBox="0 0 158 48" fill="none"><clipPath class="bclip" id="bclip1"><path d="M37.83 14.83C41.54 5.85 50.3 0 60.01 0L134 0C147.25 0 158 10.75 158 24C158 37.25 147.25 48 134 48L60.01 48C50.3 48 41.54 42.15 37.83 33.17L37.83 33.17C34.25 43.75 25.04 49.77 15.83 47.54C6.63 45.31 0 35.45 0 24C0 12.55 6.63 2.69 15.83 0.46C25.04 -1.77 34.25 4.25 37.83 14.83Z"></path></clipPath><path class="bpath" d="M37.83 14.83C41.54 5.85 50.3 0 60.01 0L134 0C147.25 0 158 10.75 158 24C158 37.25 147.25 48 134 48L60.01 48C50.3 48 41.54 42.15 37.83 33.17L37.83 33.17C34.25 43.75 25.04 49.77 15.83 47.54C6.63 45.31 0 35.45 0 24C0 12.55 6.63 2.69 15.83 0.46C25.04 -1.77 34.25 4.25 37.83 14.83Z" fill="var(--btn1-fill)" stroke="var(--btn1-stroke)" stroke-width="2.4" clip-path="url(#bclip1)"></path></svg><i class="btn-dot"></i></div>
         <span class="btn-label" style="color:var(--btn1-label)">Let's Talk</span>
         <svg class="btn-arr al" width="12.22" height="14.67" viewBox="11.9 14.75 10 12" fill="none" overflow="visible" style="color:var(--btn1-arrow)"><path d="M12.3984 20.747H21.3984M17.8726 23.7109L21.3984 20.747L17.8726 17.7832" stroke="currentColor" stroke-width="1.2" vector-effect="non-scaling-stroke"></path></svg>
@@ -674,7 +693,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   <!-- ===== 11.1 Project Hero (B01) ===== -->
   <section class="cs-hero" data-block="11.1 Project Hero (B01)">
     <div class="wrap">
-      <div class="cs-hero__media media" data-asset="hero"></div>
+      <div class="cs-hero__media media" data-asset="hero"><picture><source media="(max-width:767.98px)" srcset="./assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby-mobile.webp"><img src="./assets/casestudy_Enjin3D/enjin-3d-brand-mascot-blobby.webp" alt="Blobby, Enjin's 3D brand mascot, flying with rocket boots" fetchpriority="high"></picture></div>
       <div class="cs-hero__body">
         <div class="cs-hero__left">
           <h1 class="cs-hero__title"><span class="fx-line">Enjin</span><span class="fx-line accent">Community</span></h1>
@@ -709,8 +728,8 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     <div class="wrap">
       <div class="sh"><h2 class="sh__title"><span>Two styles,</span><span class="accent">one model</span></h2><p class="sh__desc">Two looks were developed from the same 3D models: a realistic one with soft materials and light, and a flat one textured to feel like 2D animation.</p></div>
       <div class="m2c__grid">
-        <figure class="m2c__item"><div class="m2c__img media" data-asset="styles-1"></div><ul><li class="bullet"><svg class="bullet__ic" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 5V1M5 5l4-1.3M5 5l2.5 3.4M5 5L2.5 8.4M5 5L1 3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Realistic: soft materials, depth and studio light</span></li></ul></figure>
-        <figure class="m2c__item"><div class="m2c__img media" data-asset="styles-2"></div><ul><li class="bullet"><svg class="bullet__ic" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 5V1M5 5l4-1.3M5 5l2.5 3.4M5 5L2.5 8.4M5 5L1 3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Flat: outlines and toon color that mimic 2D frames</span></li></ul></figure>
+        <figure class="m2c__item"><div class="m2c__img media" data-asset="styles-1"><picture><img src="./assets/casestudy_Enjin3D/enjin-blobby-3d-poses.webp" alt="Blobby 3D mascot with a laptop and holding a heart" loading="lazy"></picture></div><ul><li class="bullet"><svg class="bullet__ic" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 5V1M5 5l4-1.3M5 5l2.5 3.4M5 5L2.5 8.4M5 5L1 3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Realistic: soft materials, depth and studio light</span></li></ul></figure>
+        <figure class="m2c__item"><div class="m2c__img media" data-asset="styles-2"><picture><img src="./assets/casestudy_Enjin3D/enjin-blobby-3d-model-poses.webp" alt="Four 3D poses of Blobby, the Enjin mascot" loading="lazy"></picture></div><ul><li class="bullet"><svg class="bullet__ic" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 5V1M5 5l4-1.3M5 5l2.5 3.4M5 5L2.5 8.4M5 5L1 3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Flat: outlines and toon color that mimic 2D frames</span></li></ul></figure>
       </div>
     </div>
   </section>
@@ -736,9 +755,9 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     <div class="wrap">
       <div class="sh"><h2 class="sh__title"><span>Multiverse</span><span class="accent">items</span></h2><p class="sh__desc">Multiverse items are built to travel across games. Each one was textured, lit and placed in an animated 3D scene with visual effects that show it in action.</p></div>
       <div class="zz">
-        <div class="zz__row"><div class="xc"><div class="zz__media media vid" data-asset="multiverse-1"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/05-multiverse-1.mp4?v=6"></video></div></div><div class="zz__body"><h3 class="zz__title">Scenes from the lore</h3><p class="zz__text">The Mask of U'thuchul was staged in a dark forest, with glowing crystals, soft light and particles that suit its mystic origin.</p></div></div>
-        <div class="zz__row"><div class="zz__media zz__media--sq zz__media--fit media vid" data-asset="multiverse-2"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/05-multiverse-2.mp4?v=4"></video></div><div class="zz__body"><h3 class="zz__title">Characters with weight</h3><p class="zz__text">Mike the Golem was animated in a night forest, with burning torches and a heavy stance that give it the presence of a game hero.</p></div></div>
-        <div class="zz__row"><div class="zz__media zz__media--sq media vid" data-asset="multiverse-3"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/05-multiverse-3.mp4"></video></div><div class="zz__body"><h3 class="zz__title">Items in Blobby's hands</h3><p class="zz__text">Blobby, dressed as a wizard, held items like the Shadowsong staff and the Aeonclipse Key, showing how each one could be used.</p></div></div>
+        <div class="zz__row"><div class="xc"><div class="zz__media media vid" data-asset="multiverse-1"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/05-multiverse-1.mp4?v=6" aria-label="Blobby flying through a sci-fi corridor with robots"></video></div></div><div class="zz__body"><h3 class="zz__title">Scenes from the lore</h3><p class="zz__text">The Mask of U'thuchul was staged in a dark forest, with glowing crystals, soft light and particles that suit its mystic origin.</p></div></div>
+        <div class="zz__row"><div class="zz__media zz__media--sq zz__media--fit media vid" data-asset="multiverse-2"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/05-multiverse-2.mp4?v=4" aria-label="3D armored warrior with flaming fists, an Enjin multiverse item"></video></div><div class="zz__body"><h3 class="zz__title">Characters with weight</h3><p class="zz__text">Mike the Golem was animated in a night forest, with burning torches and a heavy stance that give it the presence of a game hero.</p></div></div>
+        <div class="zz__row"><div class="zz__media zz__media--sq media vid" data-asset="multiverse-3"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/05-multiverse-3.mp4" aria-label="3D tree creature with glowing crystals"></video></div><div class="zz__body"><h3 class="zz__title">Items in Blobby's hands</h3><p class="zz__text">Blobby, dressed as a wizard, held items like the Shadowsong staff and the Aeonclipse Key, showing how each one could be used.</p></div></div>
       </div>
     </div>
   </section>
@@ -746,7 +765,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   <section class="cs-styles fx" data-block="11.6 Two Styles (B10 modified)">
     <div class="wrap">
       <div class="sh"><h2 class="sh__title"><span>Two styles,</span><span class="accent">one model</span></h2><p class="sh__desc">Two looks were developed from the same 3D models: a realistic one with soft materials and light, and a flat one textured to feel like 2D animation.</p></div>
-      <div class="ts__grid"><div class="ts__img media vid" data-asset="styles-3"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-1.mp4"></video></div><div class="ts__img media vid" data-asset="styles-4"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-2.mp4"></video></div><div class="ts__img media vid" data-asset="styles-5"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-3.mp4"></video></div><div class="ts__img media vid" data-asset="styles-6"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-4.mp4"></video></div><div class="ts__img media vid" data-asset="styles-7"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-5.mp4"></video></div><div class="ts__img media vid" data-asset="styles-8"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-6.mp4"></video></div></div>
+      <div class="ts__grid"><div class="ts__img media vid" data-asset="styles-3"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-1.mp4" aria-label="Blobby 3D animation holding a heart"></video></div><div class="ts__img media vid" data-asset="styles-4"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-2.mp4" aria-label="Blobby 3D animation lifting a treasure chest"></video></div><div class="ts__img media vid" data-asset="styles-5"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-3.mp4" aria-label="Blobby 3D animation using a laptop"></video></div><div class="ts__img media vid" data-asset="styles-6"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-4.mp4" aria-label="Blobby 3D animation with a sword"></video></div><div class="ts__img media vid" data-asset="styles-7"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-5.mp4" aria-label="Blobby 3D animation opening a chest"></video></div><div class="ts__img media vid" data-asset="styles-8"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/06-styles-6.mp4" aria-label="Blobby 3D animation as a wizard"></video></div></div>
     </div>
   </section>
 
@@ -755,7 +774,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     <div class="wrap">
       <div class="sh"><h2 class="sh__title"><span>Blobby in</span><span class="accent">every channel</span></h2><p class="sh__desc">Blobby, Enjin's mascot, was built as a 3D character and placed in scenes, stickers, GIFs, meme templates and longer videos for social media and chats.</p></div>
     </div>
-    <div class="c3__track" data-marquee="1"><div class="c3__card media vid" data-asset="blobby-1"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-1.mp4?v=4"></video></div><div class="c3__card media" data-asset="blobby-2"></div><div class="c3__card media vid" data-asset="blobby-3"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-3.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-4"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-4.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-5"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-5.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-6"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-6.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-7"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-7.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-8"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-8.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-9"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-9.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-10"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-10.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-11"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-11.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-12"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-12.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-13"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-13.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-14"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-14.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-15"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-15.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-16"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-16.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-17"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-17.mp4?v=4"></video></div><div class="c3__card media vid" data-asset="blobby-18"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-18.mp4?v=4"></video></div></div>
+    <div class="c3__track" data-marquee="1"><div class="c3__card media vid" data-asset="blobby-1"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-1.mp4?v=4" aria-label="Blobby animated sticker powering up"></video></div><div class="c3__card media" data-asset="blobby-2"><picture><img src="./assets/casestudy_Enjin3D/enjin-blobby-2d-thinking.webp" alt="Blobby in 2D cartoon style, thinking at the office" loading="lazy"></picture></div><div class="c3__card media vid" data-asset="blobby-3"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-3.mp4?v=4" aria-label="Blobby animated sticker at sunset"></video></div><div class="c3__card media vid" data-asset="blobby-4"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-4.mp4?v=4" aria-label="Blobby animated sticker driving an Enjin car"></video></div><div class="c3__card media vid" data-asset="blobby-5"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-5.mp4?v=4" aria-label="Blobby animated sticker in front of flames"></video></div><div class="c3__card media vid" data-asset="blobby-6"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-6.mp4?v=4" aria-label="Blobby animated sticker walking on grass"></video></div><div class="c3__card media vid" data-asset="blobby-7"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-7.mp4?v=4" aria-label="Blobby animated sticker cheering"></video></div><div class="c3__card media vid" data-asset="blobby-8"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-8.mp4?v=4" aria-label="Blobby animated sticker at a mirror"></video></div><div class="c3__card media vid" data-asset="blobby-9"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-9.mp4?v=4" aria-label="Blobby animated sticker waving an Enjin flag"></video></div><div class="c3__card media vid" data-asset="blobby-10"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-10.mp4?v=4" aria-label="Blobby animated sticker toasting with fireworks"></video></div><div class="c3__card media vid" data-asset="blobby-11"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-11.mp4?v=4" aria-label="Blobby animated sticker at a desk"></video></div><div class="c3__card media vid" data-asset="blobby-12"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-12.mp4?v=4" aria-label="Blobby animated sticker &quot;Rooting for you&quot;"></video></div><div class="c3__card media vid" data-asset="blobby-13"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-13.mp4?v=4" aria-label="Blobby animated sticker holding a &quot;No&quot; sign"></video></div><div class="c3__card media vid" data-asset="blobby-14"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-14.mp4?v=4" aria-label="Blobby animated sticker pressing a Mint button"></video></div><div class="c3__card media vid" data-asset="blobby-15"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-15.mp4?v=4" aria-label="Blobby animated sticker next to a race car"></video></div><div class="c3__card media vid" data-asset="blobby-16"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-16.mp4?v=4" aria-label="Blobby animated sticker as a Christmas tree"></video></div><div class="c3__card media vid" data-asset="blobby-17"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-17.mp4?v=4" aria-label="Blobby animated sticker with a light bulb idea"></video></div><div class="c3__card media vid" data-asset="blobby-18"><video muted loop playsinline preload="none" data-src="./assets/casestudy_Enjin3D/07-blobby-18.mp4?v=4" aria-label="Blobby animated sticker &quot;Sending good vibes&quot;"></video></div></div>
     <div class="wrap"><p class="c3__caption">From classic meme formats to sci-fi corridors and fantasy forests, Blobby kept the same rounded shape, purple hoodie and expressions, so the mascot stayed recognizable in every format.</p></div>
   </section>
 
@@ -774,7 +793,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
         <p class="cta-b">Tell us what you are building and where expert guidance would help.</p>
       </div>
       <div class="oval" data-comp="email-oval">
-        <i></i><b></b>
+        <i><svg viewBox="0 0 224.03 72.868" preserveAspectRatio="none" aria-hidden="true"><clipPath id="ov-front"><path clip-rule="evenodd" d="M-50 -50H274V123H-50ZM223.876 43.163L223.780 44.113L223.608 45.057L223.360 45.996L223.035 46.928L222.634 47.853L222.157 48.771L221.605 49.679L220.977 50.579L220.275 51.469L219.499 52.349L218.649 53.217L217.726 54.075L216.731 54.920L215.664 55.752L214.526 56.571L213.318 57.377L212.040 58.168L210.694 58.944L209.280 59.705L207.799 60.450L206.253 61.178L204.642 61.890L202.968 62.584L201.232 63.260L199.434 63.918L197.577 64.556L195.661 65.176L193.687 65.776L191.658 66.356L189.574 66.915L187.437 67.453L185.248 67.971L183.009 68.466L180.721 68.940L178.387 69.391L176.007 69.820L173.583 70.226L171.116 70.608L168.610 70.968L166.064 71.303L163.482 71.615L160.864 71.903L158.213 72.166L155.530 72.405L152.818 72.619L150.077 72.808L147.311 72.973L144.520 73.112L141.707 73.227L138.873 73.316L136.022 73.379L133.153 73.418L130.271 73.431L127.376 73.419L124.470 73.381L121.556 73.318L118.635 73.230L115.710 73.117L112.782 72.978L109.854 72.815L106.927 72.626L104.004 72.413L101.086 72.175L98.176 71.913L95.275 71.626L92.386 71.315L89.510 70.980L86.650 70.622L83.807 70.240L80.983 69.835L78.181 69.407L75.402 68.957L72.648 68.484L69.921 67.989L67.223 67.473L64.555 66.935L61.920 66.377L59.320 65.798L56.756 65.199L54.229 64.580L51.742 63.942L49.297 63.284L46.894 62.609L44.536 61.916L42.225 61.205L39.961 60.477L37.747 59.733L35.583 58.973L33.472 58.197L31.415 57.406L29.413 56.601L27.468 55.783L25.580 54.951L23.752 54.106L21.985 53.249L20.279 52.381L18.636 51.502L17.057 50.612L15.543 49.713L14.095 48.804L12.714 47.887L11.402 46.963L10.158 46.031L8.985 45.092L7.882 44.148L6.850 43.198L5.890 42.244L5.003 41.285L4.190 40.324L3.450 39.360L2.785 38.393L2.195 37.426L1.680 36.457L1.240 35.489L0.877 34.521L0.590 33.555L0.379 32.590L0.244 31.629L0.187 30.670L0.205 29.716L0.301 28.766L0.473 27.821L0.722 26.882L1.047 25.950L1.448 25.025L1.924 24.108L2.477 23.199L3.104 22.300L3.806 21.410L4.582 20.530L5.432 19.661L6.355 18.804L7.350 17.959L8.417 17.127L9.555 16.307L10.764 15.502L12.041 14.711L13.388 13.934L14.801 13.174L16.282 12.429L17.828 11.700L19.439 10.989L21.113 10.295L22.850 9.619L24.647 8.961L26.505 8.322L28.421 7.703L30.394 7.103L32.424 6.523L34.508 5.964L36.645 5.425L38.834 4.908L41.072 4.413L43.360 3.939L45.695 3.488L48.075 3.059L50.499 2.653L52.965 2.270L55.472 1.911L58.017 1.575L60.599 1.264L63.217 0.976L65.868 0.713L68.551 0.474L71.264 0.260L74.004 0.070L76.771 -0.094L79.562 -0.234L82.375 -0.348L85.208 -0.437L88.060 -0.501L90.928 -0.539L93.811 -0.552L96.706 -0.540L99.611 -0.503L102.526 -0.440L105.446 -0.352L108.372 -0.238L111.299 -0.100L114.228 0.064L117.154 0.252L120.078 0.466L122.995 0.703L125.906 0.966L128.806 1.253L131.696 1.563L134.571 1.898L137.432 2.257L140.275 2.638L143.098 3.043L145.900 3.471L148.680 3.922L151.434 4.395L154.160 4.889L156.859 5.406L159.526 5.943L162.161 6.502L164.761 7.081L167.326 7.680L169.852 8.299L172.339 8.937L174.785 9.594L177.187 10.270L179.545 10.963L181.857 11.674L184.120 12.402L186.335 13.146L188.498 13.906L190.609 14.682L192.666 15.472L194.668 16.277L196.614 17.096L198.501 17.928L200.329 18.773L202.097 19.630L203.803 20.498L205.446 21.377L207.025 22.267L208.539 23.166L209.986 24.074L211.367 24.991L212.679 25.916L213.923 26.848L215.097 27.786L216.200 28.731L217.232 29.681L218.191 30.635L219.078 31.593L219.892 32.555L220.631 33.519L221.296 34.485L221.887 35.453L222.402 36.421L222.841 37.390L223.205 38.357L223.492 39.324L223.703 40.288L223.837 41.250L223.895 42.208Z"/></clipPath><ellipse clip-path="url(#ov-front)" pathLength="1" cx="112.015" cy="36.434" rx="111.627" ry="36.046"/></svg></i><b><svg viewBox="0 0 224.03 72.868" preserveAspectRatio="none" aria-hidden="true"><ellipse pathLength="1" cx="112.015" cy="36.434" rx="111.627" ry="36.046"/></svg></b>
         <span>hello.monocreative<br>@gmail.com</span>
       </div>
     </div>
@@ -782,7 +801,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 
   <footer class="foot wrap" data-comp="footer">
     <h2 class="h7">Let us make something <i style="color:var(--lime400)">together</i></h2>
-    <div data-href="./contact.html" class="btn foot-btn" data-h="48" data-pad="6" data-shift="5" data-comp="button/footer" role="button" tabindex="0">
+    <div data-href="./contact" class="btn foot-btn" data-h="48" data-pad="6" data-shift="5" data-comp="button/footer" role="button" tabindex="0">
       <div class="btn-fluid"><svg class="btn-shape" width="158" height="48" viewBox="0 0 158 48" fill="none"><clipPath class="bclip" id="bclip3"><path d="M37.83 14.83C41.54 5.85 50.3 0 60.01 0L134 0C147.25 0 158 10.75 158 24C158 37.25 147.25 48 134 48L60.01 48C50.3 48 41.54 42.15 37.83 33.17L37.83 33.17C34.25 43.75 25.04 49.77 15.83 47.54C6.63 45.31 0 35.45 0 24C0 12.55 6.63 2.69 15.83 0.46C25.04 -1.77 34.25 4.25 37.83 14.83Z"></path></clipPath><path class="bpath" d="M37.83 14.83C41.54 5.85 50.3 0 60.01 0L134 0C147.25 0 158 10.75 158 24C158 37.25 147.25 48 134 48L60.01 48C50.3 48 41.54 42.15 37.83 33.17L37.83 33.17C34.25 43.75 25.04 49.77 15.83 47.54C6.63 45.31 0 35.45 0 24C0 12.55 6.63 2.69 15.83 0.46C25.04 -1.77 34.25 4.25 37.83 14.83Z" fill="var(--btn3-fill)" stroke="var(--btn3-stroke)" stroke-width="2.4" clip-path="url(#bclip3)"></path></svg><i class="btn-dot"></i></div>
       <span class="btn-label" style="color:var(--btn3-label)">Let's Talk</span>
       <svg class="btn-arr al" width="12.22" height="14.67" viewBox="11.9 14.75 10 12" fill="none" overflow="visible" style="color:var(--btn3-arrow)"><path d="M12.3984 20.747H21.3984M17.8726 23.7109L21.3984 20.747L17.8726 17.7832" stroke="currentColor" stroke-width="1.2" vector-effect="non-scaling-stroke"></path></svg>
@@ -797,26 +816,46 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     <div class="legal-row">
       <span class="foot-marks"><span class="foot-anim"><dc-import name="brandmark-fusion" hint-size="100%,100%"></dc-import></span></span>
       <span class="legal legal-c lang-tg" role="group" aria-label="Language"><i class="lang-ico" aria-hidden="true"></i><button type="button" class="lang-b" data-lang="en" aria-pressed="true">En</button>/<button type="button" class="lang-b" data-lang="es" aria-pressed="false">Es</button></span>
-      <a class="legal legal-r legal-link" href="./Privacy&amp;cookies.html">Privacy &amp; Cookies</a>
+      <a class="legal legal-r legal-link" href="./privacy-cookies">Privacy &amp; Cookies</a>
     </div>
   </footer>
 <!-- /SHARED:CTA-FOOT -->
 </div>
 </x-dc>
 <!-- SHARED:GRAIN -->
-<!-- GRAIN-OVERLAY:START — 2a capa de grano sobre el .grain original. Ajuste aprobado 2026-09-20 -->
+<!-- GRAIN-OVERLAY:START — capa de grano. Ajuste aprobado 2026-09-20; el .grain original se retiró 2026-10-21 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 <style>
-  .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
-    background-image:url('./assets/shared/texture-grain.png');background-repeat:repeat;
-    background-size:281.6px 281.6px;   /* grano en pantalla 1.1 px */
-    opacity:.42;mix-blend-mode:overlay;will-change:transform;
-    min-height:100lvh}                 /* móvil: cubre también la franja que destapa la barra del navegador al scrollear */
-  /* light: overlay sobre fondo claro devuelve el mismo fondo y el grano
-     desaparece; multiply lo oscurece en cualquier fondo, al mismo coste.
-     Opacidades calibradas para el mismo contraste (ΔL*) que en dark. */
-  :root[data-theme="light"] .grain{mix-blend-mode:multiply;opacity:.056}
-  :root[data-theme="light"] .grain-overlay{mix-blend-mode:multiply;opacity:.14}
+  /* (2026-10-21) Grano sin mix-blend-mode (un blend obliga a la GPU a leer y volver a mezclar lo de debajo en
+     cada frame de scroll), FIJO en pantalla como el overlay de antes y sin tapar textos. Misma estructura en light y dark.
+     Texturas: scripts/graingen.py a partir de texture-grain.png (mismo patrón de ruido).
+     · Fondo: .grain-overlay va DETRÁS del contenido (z-index:-1) con texture-grain-dark.png (intensidad 2,
+       oscuros 1, densidad 55 %, 0.6 px; en light texture-grain-light.png). body y .page sin color de fondo (lo pinta html), así el grano queda
+       detrás de textos, líneas e imágenes y se ve a través de las manchas.
+     · Imágenes (.shot en el home, .media en case studies): texture-grain-img.png (2.5 / oscuros .15 / 100 % /
+       0.5 px), fijo, visto por una ventana: clip-path:border-box sigue el border-radius y recorta también al
+       hijo fijo. Se pinta una vez; en el scroll la GPU solo mueve la ventana. */
+  /* (2026-10-24) Anclada solo arriba y con alto fijo = viewport grande (lvh). Con inset:0 también quedaba anclada
+     abajo: Chrome móvil la desplazaba/estiraba al ocultar o mostrar la barra de la URL (la textura saltaba y a veces
+     quedaba una franja inferior sin grano). Así la barra no la cambia. Igual en el grano de .shot/.media. */
+  .grain-overlay{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;z-index:-1;pointer-events:none;will-change:transform}
+  /* Una capa por tema que se funden con --fade-p, al mismo paso que el color de fondo (antes la textura cambiaba
+     de golpe y durante el cruce de .45 s se veía la de un tema sobre el fondo del otro). Quietas no cuestan: la
+     que queda a opacidad 0 no se dibuja. Las dos están siempre cargadas, así el cambio no espera a la descarga. */
+  .grain-overlay::before,.grain-overlay::after{content:"";position:absolute;inset:0}
+  .grain-overlay::before{background:url('./assets/shared/texture-grain-dark.png') 0 0/153.6px 153.6px repeat;opacity:calc(1 - var(--fade-p,0))}   /* dark: 2 / oscuros 1 / 55 % / 0.6 px */
+  .grain-overlay::after{background:url('./assets/shared/texture-grain-light.png') 0 0/115.2px 115.2px repeat;opacity:var(--fade-p,0)}   /* light: 3.35 / oscuros .15 / 100 % / 0.45 px */
+  :is(body,.page){background-color:transparent}   /* html pinta el color; body tapaba la capa z-index:-1 */
+  /* .grid2 .col (mosaico, desktop): contain:size en vez de size+layout. Con 'layout' la columna pasa a ser la
+     referencia de lo fijo y el grano de esas imágenes se movía con ella (medido: el layout extra es despreciable). */
+  @media (min-width:768px){.grid2 .col{contain:size}}
+  .shot{clip-path:border-box}
+  .shot::before{content:"";position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
+  /* z-index:1 = encima de los <video> (.vid>video es absoluto). Las de cortina (data-reveal="wipe") quitan su
+     clip-path al terminar: se repone la ventana. */
+  .media{position:relative;clip-path:border-box}
+  :root.js main [data-reveal="wipe"] .media.ir-done:not(.ba__img){clip-path:border-box}
+  .media::before{content:"";position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;z-index:1;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
 </style>
 <!-- GRAIN-OVERLAY:END -->
 <!-- /SHARED:GRAIN -->

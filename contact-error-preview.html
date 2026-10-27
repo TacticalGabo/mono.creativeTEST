@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+<meta name="robots" content="noindex, nofollow">
+<script src="js/analytics.js"></script>
 <meta charset="utf-8">
 <script>/* .js síncrono (antes lo ponía case-study.js, diferido: según qué llegaba antes, el hero se veía, se ocultaba y reaparecía) + tema elegido en el toggle (home o entry); sin elección = dark */document.documentElement.classList.add('js');try{localStorage.removeItem('mc-theme');var t=sessionStorage.getItem('mc-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<link rel="icon" type="image/svg+xml" href="./assets/shared/logo-favicon-48x29.svg?v=3">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/assets/shared/favicon.svg?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/shared/favicon-192.png?v=4">
+<link rel="apple-touch-icon" href="/assets/shared/apple-touch-icon.png?v=4">
 <title>Contact · mono.creative</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101913">
+<script>/* (2026-10-21) móvil: la barra del navegador toma el fondo del tema (dark #101913 / light #f8fbf9) y lo sigue al cambiar (toggle, swap por scroll, vuelta con atrás) */(function(){var h=document.documentElement,m=document.querySelector('meta[name="theme-color"]');if(!m||!window.MutationObserver)return;function c(){m.setAttribute('content',h.getAttribute('data-theme')==='light'?'#f8fbf9':'#101913')}c();new MutationObserver(c).observe(h,{attributes:true,attributeFilter:['data-theme']})})()</script>
 <meta name="description" content="Tell mono.creative what you are building. Design, direction and a conversation about what comes next.">
 <!-- (2026-10-04) CARGA: fuentes del propio dominio (./fonts, mismos woff2 de Google:
      variable 200-800, subsets latin + latin-ext con unicode-range) en lugar del CSS de
@@ -19,8 +26,8 @@
 <!-- (2026-10-05) las dos fuentes del primer pantallazo, pedidas ya con el HTML (sin esperar al CSS) -->
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/plus-jakarta-sans/webfont/PlusJakartaSans-200-800-normal-latin.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="./fonts/space-mono/webfont/SpaceMono-400-normal-latin.woff2">
-<link rel="stylesheet" href="./css/case-study.css?v=21">
-<link rel="stylesheet" href="./css/contact.css?v=25">
+<link rel="stylesheet" href="./css/case-study.css?v=28">
+<link rel="stylesheet" href="./css/contact.css?v=32">
 <!-- (2026-10-04) CARGA: React desde el propio dominio, igual que el home (mismos bytes,
      sha384 idéntico al SRI de support.js). Además, con window.__resources definido
      support.js NO vuelve a descargar la página entera (fetch(location.href)). -->
@@ -36,13 +43,13 @@ if(!r[u+'react-dom@18.3.1/umd/react-dom.production.min.js'])r[u+'react-dom@18.3.
 <link rel="preload" as="script" href="./vendor/react.production.min.js">
 <link rel="preload" as="script" href="./vendor/react-dom.production.min.js">
 <link rel="preload" as="fetch" crossorigin href="./components/brandmark-fusion.dc.html">
-<link rel="preload" as="fetch" crossorigin href="./components/header-logo-hover.dc.html">
+<link rel="preload" as="fetch" crossorigin href="./components/header-logo-hover.dc.html" media="(min-width:768px)">   <!-- (2026-10-21) solo desktop: en móvil ese logo va en display:none y la precarga competía con el hero -->
 <script src="./vendor/support.js"></script>
-<script src="./js/case-study.js?v=22" defer></script>
+<script src="./js/case-study.js?v=28" defer></script>
 <script src="./js/contact-config.js?v=4" defer></script>
-<script src="./js/contact-rules.js?v=3" defer></script>
+<script src="./js/contact-rules.js?v=4" defer></script>
 <script src="./js/contact-delivery.js?v=1" defer></script>
-<script src="./js/contact.js?v=19" defer></script>
+<script src="./js/contact.js?v=24" defer></script>
 </head>
 <body class="contact-page">
 <x-dc>
@@ -110,12 +117,10 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   // los calc() de --m y --mnav). Juntas se comían un tercio del hilo en móvil.
   // Ahora se mide cuando puede haber cambiado —resize, load, ResizeObserver—
   // y solo se escribe si el valor es distinto.
-  var last=null, qa=null, qadone=false;
+  var last=null;
   function u(){
     var sb=window.innerWidth-r.clientWidth;
     if(sb!==last){ last=sb; r.style.setProperty('--sbw',sb+'px'); }
-    if(!qadone){ qa=document.querySelector('.qa-w'); qadone=!!qa; }
-    if(qa){ var txt=r.clientWidth+' px'; if(qa.textContent!==txt)qa.textContent=txt; }
   }
   addEventListener('resize',u);addEventListener('load',u);
   if(window.ResizeObserver){ try{ new ResizeObserver(u).observe(r); }catch(e){} }
@@ -266,20 +271,23 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     st.done=nav;
   }
   var BLUR=null;
-  function goo(b,p,x,y){
+  /* (2026-10-21) r y ow llegan medidos desde la fase de lectura de frame(): sin layout síncrono tras
+     escribir. Solo se escribe lo que cambia: un botón lejos y ya apagado (st.apagado) no se toca, y el
+     desenfoque se compara con el atributo real (contact.js también escribe en #goo). */
+  function goo(b,p,x,y,r,ow){
     var st=parts(b); if(!st||!st.dot)return;
     if(p>0){
-      var r=b.getBoundingClientRect();
-      var k=(b.offsetWidth&&r.width)?b.offsetWidth/r.width:1;
+      if(!r){ r=b.getBoundingClientRect(); ow=b.offsetWidth; }
+      var k=(ow&&r.width)?ow/r.width:1;
       st.dot.style.transform='translate3d('+((x-r.left)*k)+'px,'+((y-r.top)*k)+'px,0) translate(-50%,-50%)';
       st.dot.style.opacity=p.toFixed(3);
-      b.classList.add('goo');
+      if(st.apagado!==false){ b.classList.add('goo'); st.apagado=false; }
       if(!BLUR)BLUR=document.querySelector('#goo feGaussianBlur');
-      if(BLUR)BLUR.setAttribute('stdDeviation',(0.2+5.8*p).toFixed(2));
+      var sd=(0.2+5.8*p).toFixed(2);
+      if(BLUR&&BLUR.getAttribute('stdDeviation')!==sd)BLUR.setAttribute('stdDeviation',sd);
       colors(st,true);
     } else {
-      st.dot.style.opacity='0';
-      b.classList.remove('goo');
+      if(st.apagado!==true){ st.dot.style.opacity='0'; b.classList.remove('goo'); st.apagado=true; }
       if(!st.hover)colors(st,false);
     }
   }
@@ -292,8 +300,8 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       // fase de LECTURA primero: antes se leía un rect, se escribía y se volvía a
       // leer, tres layouts síncronos por frame de scroll (y con el SVG del
       // clúster sucio, así que cada uno recalculaba de más)
-      var rects=[];
-      if(ev)for(var q=0;q<list.length;q++)rects[q]=list[q].getBoundingClientRect();
+      var rects=[], ows=[];
+      if(ev)for(var q=0;q<list.length;q++){ rects[q]=list[q].getBoundingClientRect(); ows[q]=list[q].offsetWidth; }
       for(var i=0;list.length>i;i++){
         var b=list[i];
         if(!ev){ if(b!==focused)set(b,false); goo(b,0); continue;}
@@ -305,7 +313,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
         var p=inside?1:(d2<=ZONE*ZONE?1-Math.sqrt(d2)/ZONE:0);
         if(p>0)any_near=p>any_near?p:any_near;
         if(!(b===focused&&!inside))set(b,inside);
-        if(FINEnow())goo(b,p,ev.x,ev.y);
+        if(FINEnow())goo(b,p,ev.x,ev.y,r,ows[i]);
       }
       window.__mcGooNear=any_near;
     }
@@ -343,7 +351,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       if(!hb||hb.dataset.pf)return;
       hb.dataset.pf='1';
       var u=hb.getAttribute('data-href'), lst=[u];
-      if(/contact\.html/.test(u))lst=lst.concat(['./css/contact.css','./js/contact.js','./js/contact-rules.js','./js/contact-config.js']);
+      if(/contact(\.html)?(?:$|[?#])/.test(u))lst=lst.concat(['./css/contact.css','./js/contact.js','./js/contact-rules.js','./js/contact-config.js']);
       lst.forEach(function(h){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l); });
     }
     document.addEventListener('pointerover',precarga,{passive:true});
@@ -410,11 +418,14 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
     // El punto verde solo existe en desktop con ratón. En un teléfono el toque
     // genera un mousemove sintético y el punto aparecía y se quedaba puesto,
     // estorbando. Aquí ni siquiera se crea el elemento.
+    // (2026-10-21) la media query se crea una vez (su .matches sigue al día) y la opacidad
+    // del punto solo se escribe si cambia
+    var mq=window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)');
     var fine=function(){
-      return !!(window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches)
-        && window.innerWidth>=768;
+      return !!(mq && mq.matches) && window.innerWidth>=768;
     };
-    var d=null;
+    var d=null, op=null;
+    function opac(v){ if(d&&v!==op){ d.style.opacity=v; op=v; } }
     function dot(){
       if(d)return d;
       d=document.createElement('div'); d.id='cursor-dot';
@@ -422,12 +433,12 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
       return d;
     }
     document.addEventListener('mousemove',function(e){
-      if(!fine()){ if(d)d.style.opacity='0'; return; }
+      if(!fine()){ opac('0'); return; }
       var el=dot();
       el.style.transform='translate3d('+e.clientX+'px,'+e.clientY+'px,0) translate(-50%,-50%)';
-      el.style.opacity=e.target&&e.target.closest&&e.target.closest('.page')?(1-(window.__mcGooNear||0)).toFixed(3):'0';
+      opac(e.target&&e.target.closest&&e.target.closest('.page')?(1-(window.__mcGooNear||0)).toFixed(3):'0');
     });
-    document.addEventListener('mouseleave',function(){if(d)d.style.opacity='0';});
+    document.addEventListener('mouseleave',function(){opac('0');});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -543,7 +554,6 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 <!-- /SHARED:JS-MENU -->
 </helmet>
 <div class="page" data-screen-label="contact">
-  <div class="grain"></div>
   <!-- SHARED:GOO -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-60%" y="-140%" width="220%" height="380%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"></feGaussianBlur><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="g"></feColorMatrix><feComposite in="SourceGraphic" in2="g" operator="atop"></feComposite></filter></svg>
 <!-- /SHARED:GOO -->
@@ -553,28 +563,28 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
   <!-- SHARED:MENU -->
 <div class="mm" id="mm">
     <nav class="mm-nav" aria-label="Menu">
-      <a class="mm-link" href="./index.html#work"><span>Work</span></a>
-      <a class="mm-link" href="./index.html#about">About</a>
-      <a class="mm-link" href="./index.html#services">Services</a>
+      <a class="mm-link" href="./#work"><span>Work</span></a>
+      <a class="mm-link" href="./#about">About</a>
+      <a class="mm-link" href="./#services">Services</a>
     </nav>
-    <a class="mm-cta" href="./contact.html"><svg class="mm-cta-shape" viewBox="0 0 280 50" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M255.3011 0C268.9416 0 280 11.0583 280 24.699C280 38.3397 268.9416 49.398 255.3011 49.398H62.7945C52.2225 49.398 43.2026 42.755 39.6789 33.416C37.0679 42.3441 30.4084 49.0158 22.2414 49.9026C20.8245 50.0562 19.3997 50.0279 17.9875 49.8189C7.1948 48.2264 -0.6894 36.5739 0.0477 23.3039C0.7865 10.0336 9.8873 -0.2063 20.758 0.0035C29.3756 0.1699 36.712 6.8593 39.5789 16.2482C43.0302 6.7691 52.122 0 62.7945 0H255.3011Z"/></svg><svg class="mm-cta-arr" width="9.777" height="6.693" viewBox="0 0 9.77705 6.69316" fill="none" aria-hidden="true"><path d="M0 3.34658H9M5.47413 6.31042L9 3.34658L5.47413 0.38274"/></svg><span>Let's Talk</span></a>
+    <a class="mm-cta" href="./contact"><svg class="mm-cta-shape" viewBox="0 0 280 50" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M255.3011 0C268.9416 0 280 11.0583 280 24.699C280 38.3397 268.9416 49.398 255.3011 49.398H62.7945C52.2225 49.398 43.2026 42.755 39.6789 33.416C37.0679 42.3441 30.4084 49.0158 22.2414 49.9026C20.8245 50.0562 19.3997 50.0279 17.9875 49.8189C7.1948 48.2264 -0.6894 36.5739 0.0477 23.3039C0.7865 10.0336 9.8873 -0.2063 20.758 0.0035C29.3756 0.1699 36.712 6.8593 39.5789 16.2482C43.0302 6.7691 52.122 0 62.7945 0H255.3011Z"/></svg><svg class="mm-cta-arr" width="9.777" height="6.693" viewBox="0 0 9.77705 6.69316" fill="none" aria-hidden="true"><path d="M0 3.34658H9M5.47413 6.31042L9 3.34658L5.47413 0.38274"/></svg><span>Let's Talk</span></a>
   </div>
 <!-- /SHARED:MENU -->
 
   <!-- SHARED:NAV -->
 <header class="nav" data-comp="nav">
-    <a class="nav-logo" href="./index.html" aria-label="mono.creative — home">
+    <a class="nav-logo" href="./" aria-label="mono.creative — home">
       <span class="nav-anim-m"><dc-import name="brandmark-fusion" align="left" hint-size="100%,100%"></dc-import></span>
       <span class="nav-anim d-only"><dc-import name="header-logo-hover" hint-size="100%,100%"></dc-import></span>
     </a>
     <div class="nav-right">
       <div class="nav-links">
-        <a class="nav-link" href="./index.html#work">Work</a>
-        <a class="nav-link" href="./index.html#about">About</a>
-        <a class="nav-link" href="./index.html#services">Services</a>
+        <a class="nav-link" href="./#work">Work</a>
+        <a class="nav-link" href="./#about">About</a>
+        <a class="nav-link" href="./#services">Services</a>
       </div>
       <button class="theme-toggle" type="button" aria-label="Toggle theme" aria-pressed="true"><svg width="18" height="18" viewBox="-0.25 -0.25 18 18" fill="none" aria-hidden="true"><path class="tt-half" d="M8.75 0.75C10.8717 0.75 12.9066 1.59285 14.4069 3.09315C15.9071 4.59344 16.75 6.62827 16.75 8.75C16.75 10.8717 15.9071 12.9066 14.4069 14.4069C12.9066 15.9071 10.8717 16.75 8.75 16.75V0.75Z" fill="currentColor"/><path d="M8.75 16.75C13.1683 16.75 16.75 13.1683 16.75 8.75C16.75 4.33172 13.1683 0.75 8.75 0.75C4.33172 0.75 0.75 4.33172 0.75 8.75C0.75 13.1683 4.33172 16.75 8.75 16.75Z" stroke="currentColor" stroke-width="1.5"/></svg></button>
-      <div data-href="./contact.html" class="btn nav-btn" data-h="48" data-pad="6" data-shift="5" data-comp="button/dark" role="button" tabindex="0">
+      <div data-href="./contact" class="btn nav-btn" data-h="48" data-pad="6" data-shift="5" data-comp="button/dark" role="button" tabindex="0">
         <div class="btn-fluid"><svg class="btn-shape" width="158" height="48" viewBox="0 0 158 48" fill="none"><clipPath class="bclip" id="bclip1"><path d="M37.83 14.83C41.54 5.85 50.3 0 60.01 0L134 0C147.25 0 158 10.75 158 24C158 37.25 147.25 48 134 48L60.01 48C50.3 48 41.54 42.15 37.83 33.17L37.83 33.17C34.25 43.75 25.04 49.77 15.83 47.54C6.63 45.31 0 35.45 0 24C0 12.55 6.63 2.69 15.83 0.46C25.04 -1.77 34.25 4.25 37.83 14.83Z"></path></clipPath><path class="bpath" d="M37.83 14.83C41.54 5.85 50.3 0 60.01 0L134 0C147.25 0 158 10.75 158 24C158 37.25 147.25 48 134 48L60.01 48C50.3 48 41.54 42.15 37.83 33.17L37.83 33.17C34.25 43.75 25.04 49.77 15.83 47.54C6.63 45.31 0 35.45 0 24C0 12.55 6.63 2.69 15.83 0.46C25.04 -1.77 34.25 4.25 37.83 14.83Z" fill="var(--btn1-fill)" stroke="var(--btn1-stroke)" stroke-width="2.4" clip-path="url(#bclip1)"></path></svg><i class="btn-dot"></i></div>
         <span class="btn-label" style="color:var(--btn1-label)">Let's Talk</span>
         <svg class="btn-arr al" width="12.22" height="14.67" viewBox="11.9 14.75 10 12" fill="none" overflow="visible" style="color:var(--btn1-arrow)"><path d="M12.3984 20.747H21.3984M17.8726 23.7109L21.3984 20.747L17.8726 17.7832" stroke="currentColor" stroke-width="1.2" vector-effect="non-scaling-stroke"></path></svg>
@@ -587,7 +597,7 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
 
   <main class="contact-layout" id="contact">
         <section class="contact-aside fx" aria-labelledby="contact-title">
-          <a class="contact-symbol" href="./index.html" aria-label="mono.creative — home"><svg class="contact-symbol-svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet" overflow="visible" style="display: block;" width="70.0048" height="29.1754" viewBox="0 0 70.0048 29.1754" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <a class="contact-symbol" href="./" aria-label="mono.creative — home"><svg class="contact-symbol-svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet" overflow="visible" style="display: block;" width="70.0048" height="29.1754" viewBox="0 0 70.0048 29.1754" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Vector">
 <path id="Vector_2" d="M29.0576 0.00357075C32.1531 -0.0810891 35.1523 1.34252 37.4136 3.96976C39.6489 6.55278 40.9589 10.1395 41.0494 13.9295C41.1777 17.9526 40.169 21.5605 37.9597 24.5236C34.7542 28.7889 29.8141 30.283 25.3875 28.327C23.5713 27.5056 22.5226 26.0859 20.3978 26.1953C18.5676 26.2895 18.0292 27.0545 16.4507 27.954C15.0287 28.7656 13.6559 29.0741 12.1024 29.1485C9.05281 29.2893 6.08173 27.9298 3.8354 25.3648C-0.896209 19.9463 -1.36165 10.6247 3.0634 4.73322C6.31064 0.366331 11.3579 -1.13907 15.8483 0.919851C17.7767 1.77927 18.4994 3.03231 20.827 2.88837C22.7031 2.77232 23.3612 1.90367 24.9796 1.05258C26.2373 0.391177 27.7052 0.0625816 29.0576 0.00357075Z" fill="currentColor"></path>
 <path id="Vector_3" d="M56.8146 29.0699C50.5929 28.1408 46.0478 21.3411 46.4728 13.598C46.8987 5.85474 52.1449 -0.120324 58.4115 0.00209181C64.6771 0.124508 69.7691 6.30145 69.9969 14.0571C70.2255 21.8129 65.5092 28.4323 59.2669 29.1184C58.45 29.208 57.6287 29.1919 56.8146 29.0699Z" fill="currentColor"></path>
@@ -651,12 +661,12 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
               </fieldset>
 
               <div class="line-field brief-field" data-field="brief">
-                <div class="field-line"><label class="sr-only" for="brief">What are you building? (optional)</label><textarea id="brief" name="brief" rows="2" placeholder="What are you building?" aria-describedby="brief-error brief-count"></textarea></div>
+                <div class="field-line"><label class="sr-only" for="brief">What are you building? (required)</label><textarea id="brief" name="brief" aria-required="true" rows="2" placeholder="What are you building?" aria-describedby="brief-error brief-count"></textarea><span class="required-mark" aria-hidden="true">*</span></div>
                 <div class="brief-meta"><span id="brief-count" hidden="hidden">0 / 1000</span></div>
                 <p class="field-error" id="brief-error" aria-live="polite"></p>
               </div>
               <fieldset class="service-field" id="services-field" aria-describedby="services-error">
-                <legend>What do you need? <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(required)</span></legend>
+                <legend>What do you need?</legend>
                 <div class="service-chips">
                   <div class="service-row">
                     <label class="choice-chip"><input type="checkbox" name="services" value="UX/UI Design"><span>UX/UI Design</span></label>
@@ -674,46 +684,57 @@ window.MCgeom = function(cb){ (function p(){ if(window.MC_GEOM) cb(window.MC_GEO
               </fieldset>
             </section>
 
-            <section class="step-panel scheduling-panel" data-step="2" aria-labelledby="schedule-title" hidden="hidden">
-              <div class="schedule-heading"><button class="icon-button schedule-back" type="button" aria-label="Back to your project" title="Back to your project"><i data-lucide="arrow-left" aria-hidden="true"></i></button><div><h2 id="schedule-title" tabindex="-1">A good place to start.</h2><p>Quick call to share ideas and see what fits.</p></div></div>
-              <div class="calendar-heading"><h3 id="calendar-month" aria-live="polite"></h3><div><button class="icon-button" id="previous-month" type="button" aria-label="Previous month" title="Previous month"><i data-lucide="chevron-left" aria-hidden="true"></i></button><button class="icon-button" id="next-month" type="button" aria-label="Next month" title="Next month"><i data-lucide="chevron-right" aria-hidden="true"></i></button></div></div>
-              <div class="calendar-weekdays" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
-              <div class="calendar-grid" id="calendar-days" role="group" aria-label="Choose a weekday"></div>
-              <fieldset class="time-field"><legend id="time-label"><i data-lucide="clock-3" aria-hidden="true"></i>Pick a time</legend><div class="tz-picker"><button type="button" class="tz-btn" id="tz-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="tz-pop"><span id="timezone-label" class="timezone-label"></span><svg class="tz-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.25C4.2 6.4 5 7.6 6 7.6S7.8 6.4 9.5 4.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button><div class="tz-pop" id="tz-pop" hidden="hidden"><input class="tz-search" id="tz-search" type="text" placeholder="Search city or offset" aria-label="Search time zone" autocomplete="off"><ul class="tz-list" id="tz-list" role="listbox" aria-label="Time zones"></ul></div></div><div id="time-slots" class="time-chips"></div><p class="field-error" id="slot-error" aria-live="polite"></p><a class="privacy-note" href="./Privacy&amp;cookies.html" target="_blank" rel="noopener" title="Privacy &amp; Cookies">How we use your data<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></fieldset>
-              <button id="skip-call" type="button" class="skip-call" aria-pressed="false">Skip, just email me</button>
-            </section>
           </div>
 
           <div class="form-bottom">
-            <div class="form-bottom-copy"><button class="text-action back-step" id="back-step" type="button" hidden="hidden"><i data-lucide="arrow-left" aria-hidden="true"></i>Back to your project</button><p id="step-caption" hidden="hidden"></p><p class="submit-feedback" id="submit-feedback" aria-live="polite"></p><a class="direct-submit" id="direct-submit" href="mailto:hello.monocreative@gmail.com" hidden="hidden">Email your brief<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
-            <button class="circle-cta" id="form-cta" type="submit"><span class="circle-cta-fluid" aria-hidden="true"><svg class="cta-blob" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="cta-blob-fill" gradientUnits="userSpaceOnUse" cx="50%" cy="45%" r="55%"><animate attributeName="cx" values="50%;58%;46%;42%;54%;50%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><animate attributeName="cy" values="45%;52%;58%;48%;40%;45%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><stop offset="0" stop-color="#B8FF00"></stop><stop offset=".62" stop-color="#B8FF00"></stop><stop offset=".86" stop-color="#9BD700"></stop><stop offset="1" stop-color="#7BAA00"></stop></radialGradient><radialGradient id="cta-blob-alpha" gradientUnits="userSpaceOnUse" cx="50%" cy="45%" r="55%"><animate attributeName="cx" values="50%;58%;46%;42%;54%;50%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><animate attributeName="cy" values="45%;52%;58%;48%;40%;45%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><stop offset="0" stop-color="#fff"></stop><stop offset=".62" stop-color="#fff"></stop><stop offset=".86" stop-color="#fff"></stop><stop offset="1" stop-color="#fff"></stop></radialGradient><mask id="cta-blob-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="-50" y="-50" width="200" height="200"><rect x="-50" y="-50" width="200" height="200" fill="url(#cta-blob-alpha)"></rect></mask></defs><g mask="url(#cta-blob-mask)"><path fill="url(#cta-blob-fill)" d="M50.00,3.00C66.79,3.00 81.62,12.77 89.84,27.00C98.05,41.23 100.14,59.15 91.57,74.00C82.99,88.85 66.43,96.00 50.00,96.00C33.57,96.00 17.69,88.04 9.30,73.50C0.90,58.96 0.90,41.04 9.30,26.50C17.69,11.96 33.21,3.00 50.00,3.00Z"><animate attributeName="d" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M50.00,3.00C66.79,3.00 81.62,12.77 89.84,27.00C98.05,41.23 100.14,59.15 91.57,74.00C82.99,88.85 66.43,96.00 50.00,96.00C33.57,96.00 17.69,88.04 9.30,73.50C0.90,58.96 0.90,41.04 9.30,26.50C17.69,11.96 33.21,3.00 50.00,3.00Z;M54.45,0.70C69.27,2.04 79.07,14.42 86.47,25.39C96.42,40.13 99.69,60.05 89.22,75.90C81.34,87.83 69.25,97.46 54.40,98.80C34.15,100.63 18.81,85.29 10.90,69.06C4.90,56.76 2.98,41.99 9.51,29.25C17.97,12.74 34.35,-1.11 54.45,0.70Z;M46.96,6.61C64.49,5.38 85.33,9.97 94.28,27.87C101.01,41.33 97.10,56.56 91.29,69.12C83.49,85.95 65.54,94.33 47.83,93.45C34.00,92.75 17.37,90.42 8.69,77.28C-2.53,60.28 0.44,38.75 11.57,22.94C19.71,11.38 33.91,7.52 46.96,6.61Z;M52.35,3.06C69.79,3.93 86.06,13.65 93.56,29.83C99.76,43.24 94.82,57.93 88.71,69.84C80.77,85.34 66.31,100.77 46.54,99.38C31.69,98.34 20.68,87.38 12.80,76.20C2.31,61.30 3.84,41.95 13.00,27.13C21.33,13.65 35.24,2.20 52.35,3.06Z;M47.27,4.58C63.66,3.60 78.02,13.21 86.54,26.39C95.99,41.03 102.12,61.25 91.03,77.69C82.12,90.89 66.70,97.02 51.42,97.48C32.41,98.05 17.85,84.09 10.53,68.28C5.03,56.41 -1.02,41.69 5.51,28.31C13.33,12.25 30.88,5.57 47.27,4.58Z;M50.00,3.00C66.79,3.00 81.62,12.77 89.84,27.00C98.05,41.23 100.14,59.15 91.57,74.00C82.99,88.85 66.43,96.00 50.00,96.00C33.57,96.00 17.69,88.04 9.30,73.50C0.90,58.96 0.90,41.04 9.30,26.50C17.69,11.96 33.21,3.00 50.00,3.00Z"></animate></path></g><circle class="btn-dot" cx="50" cy="50" r="10" fill="url(#cta-blob-fill)" style="opacity:0"></circle></svg></span><span class="circle-cta-inner"><span id="cta-label" style="text-align:center">Setup a call</span></span></button>
+            <div class="form-bottom-copy"><p class="submit-feedback" id="submit-feedback" aria-live="polite"></p><a class="direct-submit" id="direct-submit" href="mailto:hello.monocreative@gmail.com" hidden="hidden">Email your brief<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+            <button class="circle-cta" id="form-cta" type="submit"><span class="circle-cta-fluid" aria-hidden="true"><svg class="cta-blob" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="cta-blob-fill" gradientUnits="userSpaceOnUse" cx="50%" cy="45%" r="55%"><animate attributeName="cx" values="50%;58%;46%;42%;54%;50%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><animate attributeName="cy" values="45%;52%;58%;48%;40%;45%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><stop offset="0" stop-color="#B8FF00"></stop><stop offset=".62" stop-color="#B8FF00"></stop><stop offset=".86" stop-color="#9BD700"></stop><stop offset="1" stop-color="#7BAA00"></stop></radialGradient><radialGradient id="cta-blob-alpha" gradientUnits="userSpaceOnUse" cx="50%" cy="45%" r="55%"><animate attributeName="cx" values="50%;58%;46%;42%;54%;50%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><animate attributeName="cy" values="45%;52%;58%;48%;40%;45%" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"></animate><stop offset="0" stop-color="#fff"></stop><stop offset=".62" stop-color="#fff"></stop><stop offset=".86" stop-color="#fff"></stop><stop offset="1" stop-color="#fff"></stop></radialGradient><mask id="cta-blob-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="-50" y="-50" width="200" height="200"><rect x="-50" y="-50" width="200" height="200" fill="url(#cta-blob-alpha)"></rect></mask></defs><g mask="url(#cta-blob-mask)"><path fill="url(#cta-blob-fill)" d="M50.00,3.00C66.79,3.00 81.62,12.77 89.84,27.00C98.05,41.23 100.14,59.15 91.57,74.00C82.99,88.85 66.43,96.00 50.00,96.00C33.57,96.00 17.69,88.04 9.30,73.50C0.90,58.96 0.90,41.04 9.30,26.50C17.69,11.96 33.21,3.00 50.00,3.00Z"><animate attributeName="d" dur="7.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="M50.00,3.00C66.79,3.00 81.62,12.77 89.84,27.00C98.05,41.23 100.14,59.15 91.57,74.00C82.99,88.85 66.43,96.00 50.00,96.00C33.57,96.00 17.69,88.04 9.30,73.50C0.90,58.96 0.90,41.04 9.30,26.50C17.69,11.96 33.21,3.00 50.00,3.00Z;M54.45,0.70C69.27,2.04 79.07,14.42 86.47,25.39C96.42,40.13 99.69,60.05 89.22,75.90C81.34,87.83 69.25,97.46 54.40,98.80C34.15,100.63 18.81,85.29 10.90,69.06C4.90,56.76 2.98,41.99 9.51,29.25C17.97,12.74 34.35,-1.11 54.45,0.70Z;M46.96,6.61C64.49,5.38 85.33,9.97 94.28,27.87C101.01,41.33 97.10,56.56 91.29,69.12C83.49,85.95 65.54,94.33 47.83,93.45C34.00,92.75 17.37,90.42 8.69,77.28C-2.53,60.28 0.44,38.75 11.57,22.94C19.71,11.38 33.91,7.52 46.96,6.61Z;M52.35,3.06C69.79,3.93 86.06,13.65 93.56,29.83C99.76,43.24 94.82,57.93 88.71,69.84C80.77,85.34 66.31,100.77 46.54,99.38C31.69,98.34 20.68,87.38 12.80,76.20C2.31,61.30 3.84,41.95 13.00,27.13C21.33,13.65 35.24,2.20 52.35,3.06Z;M47.27,4.58C63.66,3.60 78.02,13.21 86.54,26.39C95.99,41.03 102.12,61.25 91.03,77.69C82.12,90.89 66.70,97.02 51.42,97.48C32.41,98.05 17.85,84.09 10.53,68.28C5.03,56.41 -1.02,41.69 5.51,28.31C13.33,12.25 30.88,5.57 47.27,4.58Z;M50.00,3.00C66.79,3.00 81.62,12.77 89.84,27.00C98.05,41.23 100.14,59.15 91.57,74.00C82.99,88.85 66.43,96.00 50.00,96.00C33.57,96.00 17.69,88.04 9.30,73.50C0.90,58.96 0.90,41.04 9.30,26.50C17.69,11.96 33.21,3.00 50.00,3.00Z"></animate></path></g><circle class="btn-dot" cx="50" cy="50" r="10" fill="url(#cta-blob-fill)" style="opacity:0"></circle></svg></span><span class="circle-cta-inner"><span id="cta-label" style="text-align:center">Send</span></span></button>
           </div>
+          <a class="privacy-note" href="./privacy-cookies" target="_blank" rel="noopener" title="Privacy &amp; Cookies">How we use your data<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
         </form>
       </main>
 </div>
 </x-dc>
 <!-- SHARED:GRAIN -->
-<!-- GRAIN-OVERLAY:START — 2a capa de grano sobre el .grain original. Ajuste aprobado 2026-09-20 -->
+<!-- GRAIN-OVERLAY:START — capa de grano. Ajuste aprobado 2026-09-20; el .grain original se retiró 2026-10-21 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 <style>
-  .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2147483000;
-    background-image:url('./assets/shared/texture-grain.png');background-repeat:repeat;
-    background-size:281.6px 281.6px;   /* grano en pantalla 1.1 px */
-    opacity:.42;mix-blend-mode:overlay;will-change:transform;
-    min-height:100lvh}                 /* móvil: cubre también la franja que destapa la barra del navegador al scrollear */
-  /* light: overlay sobre fondo claro devuelve el mismo fondo y el grano
-     desaparece; multiply lo oscurece en cualquier fondo, al mismo coste.
-     Opacidades calibradas para el mismo contraste (ΔL*) que en dark. */
-  :root[data-theme="light"] .grain{mix-blend-mode:multiply;opacity:.056}
-  :root[data-theme="light"] .grain-overlay{mix-blend-mode:multiply;opacity:.14}
+  /* (2026-10-21) Grano sin mix-blend-mode (un blend obliga a la GPU a leer y volver a mezclar lo de debajo en
+     cada frame de scroll), FIJO en pantalla como el overlay de antes y sin tapar textos. Misma estructura en light y dark.
+     Texturas: scripts/graingen.py a partir de texture-grain.png (mismo patrón de ruido).
+     · Fondo: .grain-overlay va DETRÁS del contenido (z-index:-1) con texture-grain-dark.png (intensidad 2,
+       oscuros 1, densidad 55 %, 0.6 px; en light texture-grain-light.png). body y .page sin color de fondo (lo pinta html), así el grano queda
+       detrás de textos, líneas e imágenes y se ve a través de las manchas.
+     · Imágenes (.shot en el home, .media en case studies): texture-grain-img.png (2.5 / oscuros .15 / 100 % /
+       0.5 px), fijo, visto por una ventana: clip-path:border-box sigue el border-radius y recorta también al
+       hijo fijo. Se pinta una vez; en el scroll la GPU solo mueve la ventana. */
+  /* (2026-10-24) Anclada solo arriba y con alto fijo = viewport grande (lvh). Con inset:0 también quedaba anclada
+     abajo: Chrome móvil la desplazaba/estiraba al ocultar o mostrar la barra de la URL (la textura saltaba y a veces
+     quedaba una franja inferior sin grano). Así la barra no la cambia. Igual en el grano de .shot/.media. */
+  .grain-overlay{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;z-index:-1;pointer-events:none;will-change:transform}
+  /* Una capa por tema que se funden con --fade-p, al mismo paso que el color de fondo (antes la textura cambiaba
+     de golpe y durante el cruce de .45 s se veía la de un tema sobre el fondo del otro). Quietas no cuestan: la
+     que queda a opacidad 0 no se dibuja. Las dos están siempre cargadas, así el cambio no espera a la descarga. */
+  .grain-overlay::before,.grain-overlay::after{content:"";position:absolute;inset:0}
+  .grain-overlay::before{background:url('./assets/shared/texture-grain-dark.png') 0 0/153.6px 153.6px repeat;opacity:calc(1 - var(--fade-p,0))}   /* dark: 2 / oscuros 1 / 55 % / 0.6 px */
+  .grain-overlay::after{background:url('./assets/shared/texture-grain-light.png') 0 0/115.2px 115.2px repeat;opacity:var(--fade-p,0)}   /* light: 3.35 / oscuros .15 / 100 % / 0.45 px */
+  :is(body,.page){background-color:transparent}   /* html pinta el color; body tapaba la capa z-index:-1 */
+  /* .grid2 .col (mosaico, desktop): contain:size en vez de size+layout. Con 'layout' la columna pasa a ser la
+     referencia de lo fijo y el grano de esas imágenes se movía con ella (medido: el layout extra es despreciable). */
+  @media (min-width:768px){.grid2 .col{contain:size}}
+  .shot{clip-path:border-box}
+  .shot::before{content:"";position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
+  /* z-index:1 = encima de los <video> (.vid>video es absoluto). Las de cortina (data-reveal="wipe") quitan su
+     clip-path al terminar: se repone la ventana. */
+  .media{position:relative;clip-path:border-box}
+  :root.js main [data-reveal="wipe"] .media.ir-done:not(.ba__img){clip-path:border-box}
+  .media::before{content:"";position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;z-index:1;pointer-events:none;background:url('./assets/shared/texture-grain-img.png') 0 0/128px 128px repeat}
 </style>
 <!-- GRAIN-OVERLAY:END -->
 <!-- /SHARED:GRAIN -->
 <noscript>This form needs JavaScript. Email <a href="mailto:hello.monocreative@gmail.com">hello.monocreative@gmail.com</a> to get in touch.</noscript>
 <style>/* PREVIEW: prueba de errores a 12px */ .field-error,.submit-feedback,.direct-submit,.email-suggestion{font-size:12px} .submit-feedback{color:var(--contact-error)}</style>
 <script>
-// PREVIEW: abre el paso 2 y muestra el error de envio (solo local)
-window.addEventListener("load",function(){var f=document.getElementById("contact-form");f.requestSubmit();setTimeout(function(){var fb=document.getElementById("submit-feedback"),se=document.getElementById("slot-error"),l=document.getElementById("direct-submit");setInterval(function(){fb.textContent="Something went wrong. Try again or email us.";se.textContent="Pick a time, or choose email instead";l.href="mailto:hello.monocreative@gmail.com";l.hidden=false;},150);},400);});
+// PREVIEW: envía el formulario vacío para pintar los errores de validación y el error de envío (solo local)
+window.addEventListener("load",function(){var f=document.getElementById("contact-form");f.requestSubmit();setTimeout(function(){var fb=document.getElementById("submit-feedback"),l=document.getElementById("direct-submit");setInterval(function(){fb.textContent="Something went wrong. Try again or email us.";l.href="mailto:hello.monocreative@gmail.com";l.hidden=false;},150);},400);});
 </script>
-</body>
-</html>

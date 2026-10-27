@@ -55,9 +55,13 @@
             if (!current.grant.uploadUrl) throw new Error('Missing upload URL.');
             const upload = new URL(current.grant.uploadUrl, origin);
             if (upload.origin !== origin || !upload.pathname.startsWith(endpoint.pathname + '/')) throw new Error('Invalid upload URL.');
-            await request(upload.href, {
+            const uploaded = await request(upload.href, {
               method: 'PUT', headers: { 'Content-Type': 'application/octet-stream', Authorization: 'Bearer ' + current.grant.authorization }, body: file
             }, 5 * 60 * 1000);
+            // The file's Drive reference travels back inside a freshly signed authorization.
+            if (uploaded.authorization && Number.isFinite(Date.parse(uploaded.expiresAt))) {
+              current.grant = { ...current.grant, authorization: uploaded.authorization, expiresAt: uploaded.expiresAt };
+            }
             current.uploaded = true;
           }
           onStatus('sending');

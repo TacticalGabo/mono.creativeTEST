@@ -129,23 +129,6 @@
     return /[<>]|\bseo\s+services\b|\bbacklinks?\b|\bcasinos?\b/i.test(text);
   }
 
-  function dateKey(date) {
-    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
-  }
-
-  function eligibleDate(key, now) {
-    if (typeof key !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(key)) return false;
-    var parts = key.split('-').map(Number);
-    var date = new Date(parts[0], parts[1] - 1, parts[2], 12);
-    if (dateKey(date) !== key || date.getDay() === 0 || date.getDay() === 6) return false;
-    now = now || new Date();
-    if (!(now instanceof Date) || Number.isNaN(now.getTime())) return false;
-    var first = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12);
-    var dow = now.getDay(), monday = now.getDate() + (dow === 0 ? -6 : 1 - dow);
-    var last = new Date(now.getFullYear(), now.getMonth(), monday + 18, 12);
-    return date >= first && date <= last;
-  }
-
-  return { validateName: validateName, validateEmail: validateEmail, validateTelegram: validateTelegram, validateLinks: validateLinks, validateBrief: validateBrief, validateFile: validateFile, isSpam: isSpam, dateKey: dateKey, eligibleDate: eligibleDate };
+  return { validateName: validateName, validateEmail: validateEmail, validateTelegram: validateTelegram, validateLinks: validateLinks, validateBrief: validateBrief, validateFile: validateFile, isSpam: isSpam };
 });
 
