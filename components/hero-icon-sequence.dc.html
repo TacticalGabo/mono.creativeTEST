@@ -83,7 +83,7 @@ class Component extends DCLogic {
 var self = this;
     // MCgeom hace polling y no se puede cancelar: si el componente ya murió,
     // el callback tiene que salir solo. prepare() muestrea cientos de puntos
-    // del SVG y bloquea el hilo 15-30 ms, así que se aplaza a un hueco libre;
+    // del SVG (va en trozos, ver prepare) y se arranca en un hueco libre;
     // el bucle de dibujo ya no pinta nada hasta que this.ready es true.
     const idle = typeof window.requestIdleCallback === 'function'
       ? function (fn) { window.requestIdleCallback(fn, { timeout: 120 }); }
@@ -137,18 +137,19 @@ var self = this;
     };
   }
 
-  sample(d, n) {
+  *sample(d, n) {
     this.sampleEl.setAttribute('d', d);
     const total = this.sampleEl.getTotalLength();
     const out = [];
     for (let i = 0; i < n; i++) {
       const p = this.sampleEl.getPointAtLength((i / n) * total);
       out.push([p.x, p.y]);
+      yield;
     }
     return out;
   }
 
-  blobFor(target) {
+  *blobFor(target) {
     let best = { cost: Infinity, off: 0, dir: 1 };
     for (const dir of [1, -1]) {
       for (let off = 0; off < N; off++) {
@@ -161,6 +162,7 @@ var self = this;
           cost += dx * dx + dy * dy;
         }
         if (cost < best.cost) best = { cost: cost, off: off, dir: dir };
+        yield;
       }
     }
     const pts = [];
@@ -172,8 +174,24 @@ var self = this;
     return pts;
   }
 
+  // (2026-10-28) prepare() EN TROZOS: en desktop era UNA tarea de ~340 ms que PageSpeed contaba
+  // como bloqueo. Generador avanzado en tandas de <=40 ms (por debajo de los 50 ms que cuentan
+  // como tarea larga) con setTimeout entre tandas, para que termine igual de pronto que antes:
+  // mismas llamadas, mismo orden, mismo resultado. El bucle sigue sin pintar hasta this.ready.
   prepare(shapes, flower) {
     if (!this.sampleEl) return;
+    const it = this.prepSteps(shapes, flower);
+    const run = () => {
+      if (this.dead) return;
+      const t0 = performance.now();
+      while (!it.next().done) {
+        if (performance.now() - t0 > 40) { setTimeout(run, 0); return; }
+      }
+    };
+    run();
+  }
+
+  *prepSteps(shapes, flower) {
     const fit = (pts) => {
       let lo = Infinity, hi = -Infinity, x0 = Infinity, x1 = -Infinity;
       for (const p of pts) {
@@ -184,7 +202,7 @@ var self = this;
       }
       return { scale: BLOB_H / (hi - lo), cx: (x0 + x1) / 2, cy: (lo + hi) / 2, x0: x0 };
     };
-    const lampRaw = this.sample(shapes.STATE2_A, N);
+    const lampRaw = yield* this.sample(shapes.STATE2_A, N);
     const lampFit = fit(lampRaw);
     this.lampScale = lampFit.scale * 1.56;
     this.lampCenter = { x: lampFit.x0, y: lampFit.cy };
@@ -194,17 +212,17 @@ var self = this;
       LEFT + LAMP_DX + (p[0] - this.lampCenter.x) * this.lampScale,
       TARGET.cy + (p[1] - this.lampCenter.y) * this.lampScale
     ]);
-    this.lamp = { pts: lamp, blob: this.blobFor(lamp) };
+    this.lamp = { pts: lamp, blob: yield* this.blobFor(lamp) };
 
-    const fLocal = this.sample(flower.FLOWER_OUTER, N);
-    const fHole = this.sample(flower.FLOWER_HOLE, N_HOLE);
+    const fLocal = yield* this.sample(flower.FLOWER_OUTER, N);
+    const fHole = yield* this.sample(flower.FLOWER_HOLE, N_HOLE);
     const flowerFit = fit(fLocal);
     this.flowerScale = flowerFit.scale * 1.634;
     const stage = (p) => [
       LEFT + (p[0] - flowerFit.x0) * this.flowerScale,
       TARGET.cy + (p[1] - flowerFit.cy) * this.flowerScale
     ];
-    this.flower = { local: fLocal, hole: fHole, stage: stage, blob: this.blobFor(fLocal.map(stage)) };
+    this.flower = { local: fLocal, hole: fHole, stage: stage, blob: yield* this.blobFor(fLocal.map(stage)) };
 
     if (this.beam) this.beam.setAttribute('d', shapes.STATE2_B);
     this.ready = true;
