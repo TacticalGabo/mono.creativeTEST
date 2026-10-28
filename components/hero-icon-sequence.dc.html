@@ -175,8 +175,8 @@ var self = this;
   }
 
   // (2026-10-28) prepare() EN TROZOS: en desktop era UNA tarea de ~340 ms que PageSpeed contaba
-  // como bloqueo. Generador avanzado en tandas de <=40 ms (por debajo de los 50 ms que cuentan
-  // como tarea larga) con setTimeout entre tandas, para que termine igual de pronto que antes:
+  // como bloqueo. Generador avanzado en tandas de ~10 ms (holgura para que en CPUs lentas no
+  // pasen de los 50 ms que cuentan como tarea larga) con setTimeout entre tandas:
   // mismas llamadas, mismo orden, mismo resultado. El bucle sigue sin pintar hasta this.ready.
   prepare(shapes, flower) {
     if (!this.sampleEl) return;
@@ -185,7 +185,7 @@ var self = this;
       if (this.dead) return;
       const t0 = performance.now();
       while (!it.next().done) {
-        if (performance.now() - t0 > 40) { setTimeout(run, 0); return; }
+        if (performance.now() - t0 > 10) { setTimeout(run, 0); return; }
       }
     };
     run();
