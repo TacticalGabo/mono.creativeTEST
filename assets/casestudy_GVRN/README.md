@@ -1,0 +1,23 @@
+# casestudy_GVRN — imágenes y vídeos del case study
+
+Página: `../../casestudy_GVRN.html` · Origen: `mono.cases/cases_psd/` (copias optimizadas; los originales no se tocan).
+Actualizado: 2026-10-21 (re-export de los 9 PSD; URLs con ?v=2).
+
+- El tamaño del hueco lo manda el frame de Figma (Desktop 1440 / Mobile 360), no el archivo:
+  Figma FILL = `background-size:cover` / `object-fit:cover` centrado (ver `xlogClaude/figma-fill-imagenes.md`).
+- Export: 2× el tamaño máximo en pantalla (página a 1920) sin pasar del original. Opacas → WebP q84 o JPG q85
+  (el más ligero); con alfa → WebP q92; GIF grande → MP4 H.264 (crf 24-25, sin audio, faststart) + poster JPG
+  del primer frame; GIF pequeño → WebP animado.
+- Para reemplazar una pieza: mismo nombre de archivo. Las rutas viven en el bloque `9 · ASSETS` de la página.
+
+| Archivo | Bloque | Peso | Tamaño |
+|---|---|---|---|
+| `gvrn-legal-website-homepage-mobile.webp` | Hero (B01) · mobile | 40 KB | 1000×1056 |
+| `gvrn-legal-website-homepage.webp` | Hero (B01) · desktop | 52 KB | 1920×924 (recorte 1056/508 anclado abajo) |
+| `gvrn-jurisdiction-map.webp` | 6.4 Exploration (B08) | 46 KB | 1200×675 |
+| `gvrn-isometric-exploration.webp` | 6.4 Exploration (B08) | 86 KB | 1200×675 |
+| `gvrn-legal-services-menu.webp` | 6.4 Exploration (B08) | 43 KB | 717×1000 |
+| `gvrn-practice-numbers.webp` | 6.4 Exploration (B08) | 40 KB | 1000×1000 |
+| `gvrn-company-formation-page.webp` | 6.5 Final Direction (B11) | 45 KB | 1000×736 |
+| `gvrn-pre-tge-advisory-page.webp` | 6.5 Final Direction (B11) | 34 KB | 1000×736 |
+| `gvrn-contact-form.webp` | 6.5 Final Direction (B11) | 29 KB | 1400×663 |

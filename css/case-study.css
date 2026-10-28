@@ -509,6 +509,7 @@ html.ov-arm .oval.ov-in span{transition:color .5s ease,opacity .4s ease .65s}
 .lang-ico{width:1.0833em;height:1.0833em;margin-right:4px;flex:none;background:currentColor;-webkit-mask:url(../assets/shared/icon-language-13x13.svg) center/100% 100% no-repeat;mask:url(../assets/shared/icon-language-13x13.svg) center/100% 100% no-repeat}
 .lang-b{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;transition:color .3s ease}
 .lang-b[aria-pressed="true"]{font-weight:700;cursor:default}
+.lang-b[data-lang="en"]{margin-right:2.5px}.lang-b[data-lang="es"]{margin-left:2.5px}   /* (2026-10-28) centros de En y Es a >=24 px: tamaño de toque mínimo de Google */
 .lang-b[aria-pressed="false"]:hover{color:#fff}
 :root[data-theme="light"] .lang-b[aria-pressed="false"]:hover{color:#5f8300}
 .legal-link{text-decoration:underline;text-underline-offset:2px;transition:color .3s ease}   /* hovers = "Learn more" del tooltip de cookies */

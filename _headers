@@ -1,0 +1,5 @@
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: SAMEORIGIN
+  Cross-Origin-Opener-Policy: same-origin
+  X-Content-Type-Options: nosniff
